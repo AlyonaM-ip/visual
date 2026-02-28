@@ -1,0 +1,16 @@
+image: node:18
+
+stages:
+  - test
+
+cache:
+  paths:
+    - node_modules/
+
+test:
+  stage: test
+  script:
+    - npm ci       
+    - npm test
+  only:
+    - branches
