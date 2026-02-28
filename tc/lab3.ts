@@ -1,4 +1,4 @@
-function csvToJSON(input: string[], delimiter: string): object[] {
+export function csvToJSON(input: string[], delimiter: string): object[] {
     if (!input || input.length === 0) {
         throw new Error("Входной массив пуст");
     }
@@ -27,8 +27,14 @@ function csvToJSON(input: string[], delimiter: string): object[] {
         for (let j = 0; j < headers.length; j++) {
             const header = headers[j].trim();
             const value = values[j].trim();
-            const numValue = Number(value);
-            obj[header] = isNaN(numValue) ? value : numValue;
+            
+            
+            if (value === '') {
+                obj[header] = '';
+            } else {
+                const numValue = Number(value);
+                obj[header] = isNaN(numValue) ? value : numValue;
+            }
         }
         
         result.push(obj);

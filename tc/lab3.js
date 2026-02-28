@@ -1,3 +1,6 @@
+"use strict";
+exports.__esModule = true;
+exports.csvToJSON = void 0;
 function csvToJSON(input, delimiter) {
     if (!input || input.length === 0) {
         throw new Error("Входной массив пуст");
@@ -19,13 +22,18 @@ function csvToJSON(input, delimiter) {
         for (var j = 0; j < headers.length; j++) {
             var header = headers[j].trim();
             var value = values[j].trim();
-            var numValue = Number(value);
-            obj[header] = isNaN(numValue) ? value : numValue;
+            if (value === '') {
+                obj[header] = '';
+            }
+            else {
+                var numValue = Number(value);
+                obj[header] = isNaN(numValue) ? value : numValue;
+            }
         }
         result.push(obj);
     }
     return result;
 }
-// Пример из задания
+exports.csvToJSON = csvToJSON;
 var res = csvToJSON(["p1;p2;p3;p4", "1;A;b;c", "2;B;v;d"], ';');
 console.log(res);
