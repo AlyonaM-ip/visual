@@ -77,7 +77,7 @@ describe('createBook', () => {
   });
 
   it('should handle all genre types', () => {
-    const genres: Genre[] = ['fiction', 'non-fiction', 'science', 'fantasy'];
+    const genres: Genre[] = ['fiction', 'non-fiction', 'historical', 'fantasy'];
     
     genres.forEach(genre => {
       const book = {
