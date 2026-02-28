@@ -1,8 +1,4 @@
-# Project_name
-ts_term3
+# Project name tc_term3
 
-
-
-## Authors
-
-A.Medvedeva, D.Polomoshnov
+# Authors 
+Medvedeva A., Polomoshnov D.
