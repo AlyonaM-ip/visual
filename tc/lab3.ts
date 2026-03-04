@@ -75,3 +75,7 @@ async function formatCSVFileToJSONFile(
         throw new Error(`Ошибка при обработке файла: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
+
+formatCSVFileToJSONFile('data.csv', 'output.json', ';')
+    .then(() => console.log('Готово!'))
+    .catch(err => console.error('Ошибка: ', err.message));
