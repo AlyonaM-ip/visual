@@ -10,7 +10,10 @@ cache:
 test:
   stage: test
   script:
-    - npm ci       
+    - cd tc
+    - tsc lab3.ts
+    - node lab3.js
+    - cd ../tests
     - npm test
   only:
     - branches
