@@ -49,7 +49,7 @@ console.log(res);
 
 import { promises as fs } from 'fs';
 
-async function formatCSVFileToJSONFile(
+export async function formatCSVFileToJSONFile(
     input: string, 
     output: string, 
     delimiter: string
