@@ -45,3 +45,33 @@ export function csvToJSON(input: string[], delimiter: string): object[] {
 
 let res = csvToJSON(["p1;p2;p3;p4", "1;A;b;c", "2;B;v;d"], ';');
 console.log(res);
+
+
+import { promises as fs } from 'fs';
+
+async function formatCSVFileToJSONFile(
+    input: string, 
+    output: string, 
+    delimiter: string
+): Promise<void> {
+    try {
+        // Читаем CSV файл
+        const csvContent = await fs.readFile(input, 'utf-8');
+        
+        // Разбиваем содержимое на строки и фильтруем пустые строки
+        const lines = csvContent
+            .split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0);
+        
+        // Используем существующую функцию csvToJSON для преобразования
+        const jsonData = csvToJSON(lines, delimiter);
+        
+        // Записываем JSON в файл с форматированием
+        await fs.writeFile(output, JSON.stringify(jsonData, null, 2), 'utf-8');
+        
+        console.log(`Файл успешно преобразован и сохранен в ${output}`);
+    } catch (error) {
+        throw new Error(`Ошибка при обработке файла: ${error instanceof Error ? error.message : String(error)}`);
+    }
+}
