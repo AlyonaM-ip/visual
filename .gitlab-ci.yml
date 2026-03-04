@@ -10,10 +10,12 @@ cache:
 test:
   stage: test
   script:
+    - npm install -g typescript       
     - cd tc
-    - tsc lab3.ts
+    - tsc lab3.ts                    
     - node lab3.js
     - cd ../tests
+    - npm install
     - npm test
   only:
     - branches
