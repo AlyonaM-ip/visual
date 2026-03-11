@@ -76,6 +76,8 @@ export async function formatCSVFileToJSONFile(
     }
 }
 
-formatCSVFileToJSONFile('data.csv', 'output.json', ';')
-    .then(() => console.log('Готово!'))
-    .catch(err => console.error('Ошибка: ', err.message));
+if (require.main === module) {
+    formatCSVFileToJSONFile('data.csv', 'output.json', ';')
+        .then(() => console.log('Готово!'))
+        .catch(err => console.error('Ошибка: ', err.message));
+}

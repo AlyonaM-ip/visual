@@ -40,15 +40,15 @@ describe('formatCSVFileToJSONFile с ручными заглушками', () =>
         fs.promises.writeFile = mockWriteFile as any;
 
         // Вызываем тестируемую функцию
-        await formatCSVFileToJSONFile('data.csv', 'output.json', ',');
+        await formatCSVFileToJSONFile('../tc/data.csv', '../tc/output.json', ',');
 
         // Проверяем что readFile вызван
         expect(readFileCalled).toBe(true);
-        expect(readFilePath).toBe('data.csv');
+        expect(readFilePath).toBe('../tc/data.csv');
 
         // Проверяем что writeFile вызван
         expect(writeFileCalled).toBe(true);
-        expect(writeFilePath).toBe('output.json');
+        expect(writeFilePath).toBe('../tc/output.json');
         expect(writeFileEncoding).toBe('utf-8');
 
         const parsed = JSON.parse(writeFileContent);
@@ -60,11 +60,11 @@ describe('formatCSVFileToJSONFile с ручными заглушками', () =>
         ]);
     });
 
-    it('должен работать с реальными данными из data.csv (все 3 строки)', async () => {
+    it('должен работать с реальными данными из ../tc/data.csv (все 3 строки)', async () => {
         fs.promises.readFile = mockReadFile as any;
         fs.promises.writeFile = mockWriteFile as any;
 
-        await formatCSVFileToJSONFile('data.csv', 'output.json', ',');
+        await formatCSVFileToJSONFile('../tc/data.csv', '../tc/output.json', ',');
 
         const parsed = JSON.parse(writeFileContent);
         
@@ -90,7 +90,7 @@ describe('formatCSVFileToJSONFile с ручными заглушками', () =>
         fs.promises.writeFile = mockWriteFile as any;
 
         try {
-            await formatCSVFileToJSONFile('data.csv', 'output.json', ',');
+            await formatCSVFileToJSONFile('../tc/data.csv', '../tc/output.json', ',');
         } catch (error) {
             expect((error as Error).message).toContain('Файл не найден');
         }
@@ -104,7 +104,7 @@ describe('formatCSVFileToJSONFile с ручными заглушками', () =>
         fs.promises.readFile = mockReadFile as any;
         fs.promises.writeFile = mockWriteFile as any;
 
-        await formatCSVFileToJSONFile('data.csv', 'output.json', ',');
+        await formatCSVFileToJSONFile('../tc/data.csv', '../tc/output.json', ',');
         const parsed = JSON.parse(writeFileContent);
         
         expect(typeof parsed[0].age).toBe('number');
