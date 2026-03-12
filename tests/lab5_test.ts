@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, expectTypeOf } from 'vitest';
 import { where, sort, groupBy, having, query } from '../tc/lab5';
 
 describe('lab5 — строгий порядок операций', () => {
@@ -11,7 +11,9 @@ describe('lab5 — строгий порядок операций', () => {
 
   it('where + sort', () => {
     const pipeline = query(where("name", "John"), sort("age"));
-    const result = pipeline(users) as any[];
+    expectTypeOf(pipeline).toBeFunction();
+    const result = pipeline(users);
+    expectTypeOf(result).toBeArray();
     expect(result.length).toBe(3);
     expect(result[0].age).toBe(33);
   });
@@ -22,7 +24,9 @@ describe('lab5 — строгий порядок операций', () => {
       groupBy("city"),
       having(g => g.items.length > 1)
     );
-    const result = pipeline(users) as any[];
+    expectTypeOf(pipeline).toBeFunction();
+    const result = pipeline(users);
+    expectTypeOf(result).toBeArray();
     expect(result.length).toBe(2);
   });
 
@@ -33,7 +37,9 @@ describe('lab5 — строгий порядок операций', () => {
       having(g => g.items.length > 1),
       sort("key")
     );
-    const result = pipeline(users) as any[];
+    expectTypeOf(pipeline).toBeFunction();
+    const result = pipeline(users);
+    expectTypeOf(result).toBeArray();
     expect(result.length).toBe(2);
   });
 
@@ -43,7 +49,9 @@ describe('lab5 — строгий порядок операций', () => {
       where("surname", "Doe"),
       sort("age")
     );
-    const result = pipeline(users) as any[];
+    expectTypeOf(pipeline).toBeFunction();
+    const result = pipeline(users);
+    expectTypeOf(result).toBeArray();
     expect(result).toEqual([
       { id: 2, name: "John", surname: "Doe", age: 33, city: "NY" },
       { id: 1, name: "John", surname: "Doe", age: 34, city: "NY" },
@@ -53,11 +61,13 @@ describe('lab5 — строгий порядок операций', () => {
 
   it('пустой query', () => {
     const pipeline = query();
-    const result = pipeline(users) as any[];
+    expectTypeOf(pipeline).toBeFunction();
+    const result = pipeline(users);
+    expectTypeOf(result).toBeArray();
     expect(result).toEqual(users);
   });
 
-  //нешаблонные порядки
+  // Неправильные порядки (ошибки компиляции)
   it('sort перед where', () => {
     // @ts-expect-error
     query(sort("age"), where("name", "John"));
@@ -83,15 +93,16 @@ describe('lab5 — строгий порядок операций', () => {
     query(groupBy("city"), where("name", "John"));
   });
 
-
-
-  it('Пример 1: фильтрация и сортировка', () => {
+  // Примеры из задания
+  it('Фильтрация и сортировка', () => {
     const search = query(
       where("name", "John"),
       where("surname", "Doe"),
       sort("age")
     );
-    const result = search(users) as any[];
+    expectTypeOf(search).toBeFunction();
+    const result = search(users);
+    expectTypeOf(result).toBeArray();
     expect(result).toEqual([
       { id: 2, name: "John", surname: "Doe", age: 33, city: "NY" },
       { id: 1, name: "John", surname: "Doe", age: 34, city: "NY" },
@@ -99,13 +110,15 @@ describe('lab5 — строгий порядок операций', () => {
     ]);
   });
 
-  it('Пример 3: комбинированный конвейер', () => {
+  it('Комбинированный конвейер', () => {
     const pipeline = query(
       where("surname", "Doe"),
       groupBy("city"),
       having(g => g.items.some((u: any) => u.age > 34))
     );
-    const result = pipeline(users) as any[];
+    expectTypeOf(pipeline).toBeFunction();
+    const result = pipeline(users);
+    expectTypeOf(result).toBeArray();
     expect(result.length).toBe(1);
     expect(result[0].key).toBe("LA");
   });
