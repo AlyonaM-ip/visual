@@ -1,21 +1,33 @@
-image: node:18
+image: node:20
 
 stages:
   - test
+  - build
 
 cache:
   paths:
     - node_modules/
+    - tc/node_modules/
+    - tests/node_modules/
+
+before_script:
+  - npm install -g typescript vitest
 
 test:
   stage: test
   script:
-    - npm install -g typescript       
     - cd tc
-    - tsc lab3.ts                    
-    - node lab3.js
+    - tsc lab4.ts
+    - node lab4.js
     - cd ../tests
     - npm install
     - npm test
   only:
-    - branches
+    - lab4
+
+build:
+  stage: build
+  script:
+    - make
+  only:
+    - lab4
