@@ -1,6 +1,6 @@
 LIB_TS = ./tc
 LIB_TEST = ./tests
-FILE = lib5
+FILE = lab5
 
 all:
 	@echo "Converting lab5.ts to lab5.js"
@@ -14,5 +14,5 @@ test:
 run: all test
 
 clean:
-	rm -r ./test-results
+	rm -rf ./test-results
 	rm -f $(LIB_TS)/*.js  $(LIB_TS)/output.json
