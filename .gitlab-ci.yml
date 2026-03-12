@@ -17,17 +17,17 @@ test:
   stage: test
   script:
     - cd tc
-    - tsc lab4.ts
-    - node lab4.js
+    - tsc lab5.ts
+    - node lab5.js
     - cd ../tests
     - npm install
     - npm test
   only:
-    - lab4
+    - lab5
 
 build:
   stage: build
   script:
     - make
   only:
-    - lab4
+    - lab5
