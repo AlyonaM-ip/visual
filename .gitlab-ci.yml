@@ -17,8 +17,8 @@ test:
   stage: test
   script:
     - cd tc
-    - tsc lab5.ts
-    - node lab5.js
+    - tsc lab6.ts
+    - node lab6.js
     - cd ../tests
     - npm install
     - npm test
