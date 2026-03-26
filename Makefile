@@ -1,9 +1,9 @@
 LIB_TS = ./tc
 LIB_TEST = ./tests
-FILE = lab5
+FILE = lab6
 
 all:
-	@echo "Converting lab5.ts to lab5.js"
+	@echo "Converting lab6.ts to lab6.js"
 	@tsc $(LIB_TS)/$(FILE).ts 
 	@cd $(LIB_TS) && node $(FILE).js
 
