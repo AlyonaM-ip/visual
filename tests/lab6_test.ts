@@ -30,3 +30,19 @@ test('PickedByType: should handle multiple matches and empty results', () => {
   //должен быть пустой объект {}
   expectTypeOf<PickedByType<Mixed, symbol>>().toEqualTypeOf<{}>();
 });
+
+test('EventHandlers: should handle various event types', () => {
+  type UIState = {
+    open: boolean;
+    focus: number;
+    close: null;
+  };
+
+  type Expected = {
+    onOpen: (event: boolean) => void;
+    onFocus: (event: number) => void;
+    onClose: (event: null) => void;
+  };
+
+  expectTypeOf<EventHandlers<UIState>>().toEqualTypeOf<Expected>();
+});
