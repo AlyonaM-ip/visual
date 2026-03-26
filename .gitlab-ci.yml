@@ -17,8 +17,7 @@ test:
   stage: test
   script:
     - cd tc
-    - rm -f tsconfig.json
-    - tsc lab6.ts --target es6 --module commonjs
+    - tsc lab6.ts --target es6 --module commonjs --project /dev/null
     - node lab6.js
     - cd ../tests
     - npm install
