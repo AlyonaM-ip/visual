@@ -20,3 +20,13 @@ test('DeepReadonly: should handle deep nesting and arrays', () => {
 
   expectTypeOf<DeepReadonly<Complex>>().toEqualTypeOf<Expected>();
 });
+
+test('PickedByType: should handle multiple matches and empty results', () => {
+  type Mixed = { id: number; age: number; name: string; isActive: boolean };
+  
+  //выбирает только boolean
+  expectTypeOf<PickedByType<Mixed, boolean>>().toEqualTypeOf<{ isActive: boolean }>();
+  
+  //должен быть пустой объект {}
+  expectTypeOf<PickedByType<Mixed, symbol>>().toEqualTypeOf<{}>();
+});
