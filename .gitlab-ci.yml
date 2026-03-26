@@ -17,14 +17,14 @@ test:
   stage: test
   script:
     - cd tc
-    - tsc lab6.ts --ignoreConfig --target es6 --module commonjs
+    - rm -f tsconfig.json
+    - tsc lab6.ts --target es6 --module commonjs
     - node lab6.js
     - cd ../tests
     - npm install
     - npm test
   only:
     - lab6
-
 
 build:
   stage: build
