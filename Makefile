@@ -4,7 +4,7 @@ FILE = lab6
 
 all:
 	@echo "Converting lab6.ts to lab6.js"
-	@tsc $(LIB_TS)/$(FILE).ts --target es6 --module commonjs --project /dev/null
+	@cd $(LIB_TS) && rm -f tsconfig.json && npx tsc $(FILE).ts --target es6 --module commonjs
 	@cd $(LIB_TS) && node $(FILE).js
 
 test:
