@@ -23,11 +23,11 @@ test:
     - npm install
     - npm test
   only:
-    - lab5
+    - lab6
 
 build:
   stage: build
   script:
     - make
   only:
-    - lab5
+    - lab6
