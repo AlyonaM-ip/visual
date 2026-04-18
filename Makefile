@@ -1,18 +1,26 @@
 LIB_TS = ./tc
-LIB_TEST = ./tests
-FILE = lab6
+FILE = lab7
 
-all:
-	@echo "Converting lab6.ts to lab6.js"
-	@cd $(LIB_TS) && rm -f tsconfig.json && npx tsc $(FILE).ts --target es6 --module commonjs
-	@cd $(LIB_TS) && node $(FILE).js
-
+dev:
+	@echo "Starting Vite dev server..."
+	@cd $(LIB_TS) && npm run dev
+build:
+	@echo "Building project..."
+	@cd $(LIB_TS) && npm run build
 test:
-	@echo "Running tests for lab6"
-	@cd $(LIB_TEST) && npm test -- --watch=false
-
-run: all test
-
+	@echo "Running tests for lab7..."
+	@cd $(LIB_TS) && npm test -- --run
+test-watch:
+	@echo "Running tests in watch mode..."
+	@cd $(LIB_TS) && npm test
+preview:
+	@echo "Previewing built project..."
+	@cd $(LIB_TS) && npm run preview
+all: test build
+	@echo "All done"
 clean:
-	rm -rf ./test-results
-	rm -f $(LIB_TS)/*.js  $(LIB_TS)/output.json
+	@echo "Cleaning up..."
+	@rm -rf $(LIB_TS)/dist
+	@rm -rf $(LIB_TS)/node_modules/.vite
+	@rm -rf ./test-results
+	@echo "Cleaned"
