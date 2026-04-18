@@ -1,35 +1,39 @@
 image: node:20
 
 stages:
+  - install
   - test
   - build
 
 cache:
   paths:
-    - node_modules/
     - tc/node_modules/
-    - tests/node_modules/
 
 before_script:
-  - npm install -g typescript vitest
+  - cd tc
+  - npm install
+
+install:
+  stage: install
+  script:
+    - echo "Dependencies installed"
+  only:
+    - lab7
 
 test:
   stage: test
   script:
-    - cd tc
-    - npm install
-    - rm -f tsconfig.json 
-    - npx tsc lab6.ts --target es6 --module commonjs
-    - node lab6.js
-    - cd ../tests
-    - npm install
-    - npm test
+    - npm test -- --run
   only:
-    - lab6
+    - lab7
 
 build:
   stage: build
   script:
-    - make
+    - npm run build
+  artifacts:
+    paths:
+      - tc/dist/
+    expire_in: 1 week
   only:
-    - lab6
+    - lab7
