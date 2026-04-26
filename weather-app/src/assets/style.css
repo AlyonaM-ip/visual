@@ -9,33 +9,9 @@ body {
   min-height: 100vh;
 }
 
-.main {
-  max-width: 500px;
+#root {
+  max-width: 500px !important;
   width: 100%;
-}
-
-.header {
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-}
-
-.footer {
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  color: #fff;
-  font-size: 14px;
-  padding: 16px 0;
-}
-
-.footer p {
-  margin: 4px 0;
-}
-
-.footer a {
-  color: #fff;
 }
 
 .search {
@@ -92,8 +68,9 @@ body {
   margin: 0;
 }
 
-.now_icon span {
-  font-size: 48px;
+.now_icon img {
+  width: 80px;
+  height: 80px;
 }
 
 .now_icon figcaption {
@@ -204,8 +181,9 @@ body {
   margin: 0;
 }
 
-.forecast_icon span {
-  font-size: 24px;
+.forecast_icon img {
+  width: 40px;
+  height: 40px;
 }
 
 .forecast_icon figcaption {
@@ -217,4 +195,19 @@ body {
   font-size: 18px;
   font-weight: bold;
   margin: 0;
+}
+
+.footer {
+  text-align: center;
+  color: #fff;
+  font-size: 14px;
+  padding: 16px 0;
+}
+
+.footer p {
+  margin: 4px 0;
+}
+
+.footer a {
+  color: #fff;
 }

@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
 import { getCoordinates, getWeather, getAirPollution } from '../services/api';
+import Search from '../components/Search';
+import Now from '../components/Now';
+import Forecast from '../components/Forecast';
+import AirPollution from '../components/AirPollution';
+import Footer from '../components/Footer';
 
 function App() {
   const [city, setCity] = useState('Moscow');
@@ -13,10 +18,7 @@ function App() {
       setLoading(true);
       setError(null);
       
-      console.log('Fetching coordinates for:', cityName);
       const coords = await getCoordinates(cityName);
-      console.log('Coordinates:', coords);
-      
       if (!coords) {
         setError('City not found');
         setLoading(false);
@@ -27,37 +29,43 @@ function App() {
         getWeather(coords.lat, coords.lon),
         getAirPollution(coords.lat, coords.lon)
       ]);
-
-      console.log('Weather:', weatherData);
-      console.log('Pollution:', pollutionData);
       
       setWeather(weatherData);
       setPollution(pollutionData);
-      setLoading(false);
     } catch (err) {
       console.error('Error:', err);
       setError('Failed to load data');
+    } finally {
       setLoading(false);
     }
   }
 
   useEffect(() => {
     fetchData(city);
+    
+    const interval = setInterval(() => {
+      fetchData(city);
+    }, 3 * 60 * 60 * 1000);
+    
+    return () => clearInterval(interval);
   }, [city]);
 
-  function handleCityChange(newCity) {
-    setCity(newCity);
-  }
+  console.log('RENDER - loading:', loading, 'weather:', !!weather, 'pollution:', !!pollution);
 
-  if (loading) return <p>Loading... Check console (F12)</p>;
-  if (error) return <p style={{color: 'red'}}>{error}</p>;
-  if (!weather) return null;
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+  if (!weather || !pollution) return <p>No data</p>;
 
   return (
-    <div>
-      <h1>{weather.city.name}</h1>
-      <p>Data loaded! Check console for details</p>
-    </div>
+    <>
+      <Search onCityChange={setCity} />
+      <main className="main">
+        <Now weather={weather} />
+        <AirPollution pollution={pollution} />
+        <Forecast weather={weather} />
+      </main>
+      <Footer />
+    </>
   );
 }
 
