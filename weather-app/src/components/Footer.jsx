@@ -1,6 +1,6 @@
-function Footer() {
+function Footer({ weatherClass }) {
   return (
-    <footer className="footer">
+    <footer className={`footer ${weatherClass}`}>
       <p>Data owner <a href="https://openweathermap.org">OpenWeather</a></p>
       <p>
         Update: <time dateTime={new Date().toISOString()}>

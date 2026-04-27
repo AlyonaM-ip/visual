@@ -6,6 +6,20 @@ import Forecast from '../components/Forecast';
 import AirPollution from '../components/AirPollution';
 import Footer from '../components/Footer';
 
+function getWeatherClass(weather) {
+  if (!weather) return '';
+  const code = weather.list[0].weather[0].id;
+  
+  if (code >= 200 && code < 300) return 'weather-thunderstorm';
+  if (code >= 300 && code < 400) return 'weather-drizzle';
+  if (code >= 500 && code < 600) return 'weather-rain';
+  if (code >= 600 && code < 700) return 'weather-snow';
+  if (code >= 700 && code < 800) return 'weather-mist';
+  if (code === 800) return 'weather-clear';
+  if (code > 800) return 'weather-clouds';
+  return '';
+}
+
 function App() {
   const [city, setCity] = useState('Moscow');
   const [weather, setWeather] = useState(null);
@@ -50,21 +64,21 @@ function App() {
     return () => clearInterval(interval);
   }, [city]);
 
-  console.log('RENDER - loading:', loading, 'weather:', !!weather, 'pollution:', !!pollution);
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p style={{ color: 'red' }}>{error}</p>;
   if (!weather || !pollution) return <p>No data</p>;
 
+  const weatherClass = getWeatherClass(weather);
+
   return (
     <>
       <Search onCityChange={setCity} />
-      <main className="main">
+      <main className={`main ${weatherClass}`}>
         <Now weather={weather} />
         <AirPollution pollution={pollution} />
         <Forecast weather={weather} />
       </main>
-      <Footer />
+      <Footer weatherClass={weatherClass} />
     </>
   );
 }

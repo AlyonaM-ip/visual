@@ -10,7 +10,7 @@ body {
 }
 
 #root {
-  max-width: 500px !important;
+  max-width: 400px;
   width: 100%;
 }
 
@@ -36,8 +36,42 @@ body {
   cursor: pointer;
 }
 
+.weather-clear {
+  --bg-color: rgba(135, 206, 235, 0.9);
+}
+
+.weather-clouds {
+  --bg-color: rgba(176, 196, 222, 0.9);
+}
+
+.weather-rain {
+  --bg-color: rgba(112, 128, 144, 0.9);
+}
+
+.weather-drizzle {
+  --bg-color: rgba(119, 136, 153, 0.9);
+}
+
+.weather-thunderstorm {
+  --bg-color: rgba(74, 74, 74, 0.9);
+}
+
+.weather-snow {
+  --bg-color: rgba(240, 248, 255, 0.9);
+}
+
+.weather-mist {
+  --bg-color: rgba(192, 192, 192, 0.9);
+}
+
+.now,
+.air_pollution,
+.forecast,
+.footer {
+  background: var(--bg-color, rgba(158, 227, 245, 0.9));
+}
+
 .now {
-  background: rgba(158, 227, 245, 0.9);
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -98,7 +132,6 @@ body {
 }
 
 .air_pollution {
-  background: rgba(158, 227, 245, 0.9);
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -141,7 +174,6 @@ body {
 }
 
 .forecast {
-  background: rgba(158, 227, 245, 0.9);
   padding: 16px;
   border-radius: 8px;
   margin-bottom: 16px;
@@ -202,6 +234,7 @@ body {
   color: #fff;
   font-size: 14px;
   padding: 16px 0;
+  border-radius: 8px;
 }
 
 .footer p {
