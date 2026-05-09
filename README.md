@@ -1,4 +1,5 @@
-# Project name tc_term3
+# Project name 
+Final Project
 
 # Authors 
 Medvedeva A.
