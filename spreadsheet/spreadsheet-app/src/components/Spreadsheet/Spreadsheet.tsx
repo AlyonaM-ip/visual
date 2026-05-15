@@ -1,11 +1,14 @@
 //импорт основных типов и функций из main
-import { useState, useCallback } from 'react';
 import {
   type SpreadsheetData,
   type CellPosition,
   createSpreadsheet,
   getCell,
   setCell,
+  addRow,
+  deleteRow,
+  addColumn,
+  deleteColumn,
 } from '../../lib/spreadsheet-main';
 
 //преобравзовать число в букву
@@ -30,6 +33,13 @@ export default function Spreadsheet() {
   const [selected, setSelected] = useState<CellPosition>({ row: 0, col: 0 });
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
+  //всплывающее меню
+  const [contextMenu, setContextMenu] = useState<{
+    x: number;
+    y: number;
+    type: 'row' | 'col';
+    index: number;
+  } | null>(null);
 
   //получить значение ячейки
   const displayValue = useCallback(
