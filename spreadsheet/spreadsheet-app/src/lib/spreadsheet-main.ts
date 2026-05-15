@@ -75,7 +75,7 @@ export function setCell(
 }
 
 //преобразовать буквенные индексы в числовые
-function colToIndex(col: string): number {
+export function colToIndex(col: string): number {
   let result = 0;
   for (let i = 0; i < col.length; i++) {
     result = result * 26 + (col.charCodeAt(i) - 64);
@@ -84,7 +84,7 @@ function colToIndex(col: string): number {
 }
 
 //преобразовать число в буквенный индекс
-function indexToCol(index: number): string {
+export function indexToCol(index: number): string {
   let result = '';
   let n = index;
   while (n >= 0) {
