@@ -1,4 +1,5 @@
 //импорт основных типов и функций из main
+import { useState, useCallback } from 'react';
 import {
   type SpreadsheetData,
   type CellPosition,
@@ -11,7 +12,7 @@ import {
   deleteColumn,
 } from '../../lib/spreadsheet-main';
 
-//преобравзовать число в букву
+//преобразовать число в букву колонки
 function colLabel(index: number): string {
   let result = '';
   let n = index;
@@ -24,7 +25,7 @@ function colLabel(index: number): string {
 
 //таблица
 export default function Spreadsheet() {
-    //размер по умолчанию
+  //размер по умолчанию
   const [data, setData] = useState<SpreadsheetData>(() =>
     createSpreadsheet(100, 26)
   );
@@ -75,6 +76,55 @@ export default function Spreadsheet() {
     }
   }, [editing, selected, editValue]);
 
+  //открыть контекстное меню на заголовке строки
+  const onRowContext = useCallback((e: React.MouseEvent, row: number) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, type: 'row', index: row });
+  }, []);
+
+  //открыть контекстное меню на заголовке колонки
+  const onColContext = useCallback((e: React.MouseEvent, col: number) => {
+    e.preventDefault();
+    setContextMenu({ x: e.clientX, y: e.clientY, type: 'col', index: col });
+  }, []);
+
+  //закрыть меню
+  const closeMenu = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
+  //добавить строку
+  const handleAddRow = useCallback(() => {
+    if (contextMenu) {
+      setData((prev) => addRow(prev, contextMenu.index));
+      closeMenu();
+    }
+  }, [contextMenu, closeMenu]);
+
+  //удалить строку
+  const handleDeleteRow = useCallback(() => {
+    if (contextMenu && data.rowCount > 1) {
+      setData((prev) => deleteRow(prev, contextMenu.index));
+      closeMenu();
+    }
+  }, [contextMenu, data.rowCount, closeMenu]);
+
+  //добавить колонку
+  const handleAddColumn = useCallback(() => {
+    if (contextMenu) {
+      setData((prev) => addColumn(prev, contextMenu.index));
+      closeMenu();
+    }
+  }, [contextMenu, closeMenu]);
+
+  //удалить колонку
+  const handleDeleteColumn = useCallback(() => {
+    if (contextMenu && data.colCount > 1) {
+      setData((prev) => deleteColumn(prev, contextMenu.index));
+      closeMenu();
+    }
+  }, [contextMenu, data.colCount, closeMenu]);
+
   //блок таблицы
   return (
     <div>
@@ -101,7 +151,7 @@ export default function Spreadsheet() {
         />
       </div>
 
-      {/*здесь адрес ячейки*/}
+      {/*адрес ячейки*/}
       <div>
         {colLabel(selected.col)}{selected.row + 1}
       </div>
@@ -112,14 +162,16 @@ export default function Spreadsheet() {
           <tr>
             <th></th>
             {Array.from({ length: data.colCount }, (_, i) => (
-              <th key={i}>{colLabel(i)}</th>
+              <th key={i} onContextMenu={(e) => onColContext(e, i)}>
+                {colLabel(i)}
+              </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {Array.from({ length: data.rowCount }, (_, row) => (
             <tr key={row}>
-              <td>{row + 1}</td>
+              <td onContextMenu={(e) => onRowContext(e, row)}>{row + 1}</td>
               {Array.from({ length: data.colCount }, (_, col) => (
                 <td
                   key={col}
@@ -139,6 +191,23 @@ export default function Spreadsheet() {
           ))}
         </tbody>
       </table>
+
+      {/*контекстное меню*/}
+      {contextMenu && (
+        <div style={{ position: 'fixed', top: contextMenu.y, left: contextMenu.x }}>
+          {contextMenu.type === 'row' ? (
+            <>
+              <button onClick={handleAddRow}>Добавить строку</button>
+              <button onClick={handleDeleteRow} disabled={data.rowCount <= 1}>Удалить строку</button>
+            </>
+          ) : (
+            <>
+              <button onClick={handleAddColumn}>Добавить столбец</button>
+              <button onClick={handleDeleteColumn} disabled={data.colCount <= 1}>Удалить столбец</button>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
