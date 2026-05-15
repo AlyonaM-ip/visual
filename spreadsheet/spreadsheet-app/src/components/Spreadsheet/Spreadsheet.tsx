@@ -205,7 +205,7 @@ export default function Spreadsheet() {
 
   //блок таблицы
   return (
-    <div>
+    <div onMouseMove={onResizeMove} onMouseUp={onResizeEnd} onMouseLeave={onResizeEnd}>
       {/*панель формул*/}
       <div>
         <input
@@ -240,16 +240,33 @@ export default function Spreadsheet() {
           <tr>
             <th></th>
             {Array.from({ length: data.colCount }, (_, i) => (
-              <th key={i} onContextMenu={(e) => onColContext(e, i)}>
+              <th
+                key={i}
+                onContextMenu={(e) => onColContext(e, i)}
+                style={{ width: colWidths[i], position: 'relative' }}
+              >
                 {colLabel(i)}
+                <div
+                  onMouseDown={(e) => onColResizeStart(e, i)}
+                  style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 4, cursor: 'col-resize', }}
+                />
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
           {Array.from({ length: data.rowCount }, (_, row) => (
-            <tr key={row}>
-              <td onContextMenu={(e) => onRowContext(e, row)}>{row + 1}</td>
+            <tr key={row} style={{ height: rowHeights[row] }}>
+              <td
+                onContextMenu={(e) => onRowContext(e, row)}
+                style={{ position: 'relative' }}
+              >
+                {row + 1}
+                <div
+                  onMouseDown={(e) => onRowResizeStart(e, row)}
+                  style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, cursor: 'row-resize', }}
+                />
+              </td>
               {Array.from({ length: data.colCount }, (_, col) => (
                 <td
                   key={col}
