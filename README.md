@@ -1,5 +1,9 @@
 # Project name 
 Final Project
 
-# Authors 
-Medvedeva A.
+## Authors 
+Medvedeva A. ,
+Polomoshnov D.
+
+## Student group
+IP-415
