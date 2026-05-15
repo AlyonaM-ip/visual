@@ -42,6 +42,23 @@ export default function Spreadsheet() {
     index: number;
   } | null>(null);
 
+  //размеры колонок и строк
+  const [colWidths, setColWidths] = useState<number[]>(() =>
+    Array(26).fill(80)
+  );
+  const [rowHeights, setRowHeights] = useState<number[]>(() =>
+    Array(100).fill(24)
+  );
+
+  //перетаскивание границы
+  const [resizing, setResizing] = useState<{
+    type: 'col' | 'row';
+    index: number;
+    startX: number;
+    startY: number;
+    startSize: number;
+  } | null>(null);
+
   //получить значение ячейки
   const displayValue = useCallback(
     (row: number, col: number): string => {
@@ -124,6 +141,67 @@ export default function Spreadsheet() {
       closeMenu();
     }
   }, [contextMenu, data.colCount, closeMenu]);
+
+  //начать ресайз колонки
+  const onColResizeStart = useCallback(
+    (e: React.MouseEvent, col: number) => {
+      e.preventDefault();
+      setResizing({
+        type: 'col',
+        index: col,
+        startX: e.clientX,
+        startY: e.clientY,
+        startSize: colWidths[col],
+      });
+    },
+    [colWidths]
+  );
+
+  //начать ресайз строки
+  const onRowResizeStart = useCallback(
+    (e: React.MouseEvent, row: number) => {
+      e.preventDefault();
+      setResizing({
+        type: 'row',
+        index: row,
+        startX: e.clientX,
+        startY: e.clientY,
+        startSize: rowHeights[row],
+      });
+    },
+    [rowHeights]
+  );
+
+  //движение мыши при ресайзе
+  const onResizeMove = useCallback(
+    (e: React.MouseEvent) => {
+      if (!resizing) return;
+
+      if (resizing.type === 'col') {
+        const delta = e.clientX - resizing.startX;
+        const newWidth = Math.max(40, resizing.startSize + delta);
+        setColWidths((prev) => {
+          const next = [...prev];
+          next[resizing.index] = newWidth;
+          return next;
+        });
+      } else {
+        const delta = e.clientY - resizing.startY;
+        const newHeight = Math.max(20, resizing.startSize + delta);
+        setRowHeights((prev) => {
+          const next = [...prev];
+          next[resizing.index] = newHeight;
+          return next;
+        });
+      }
+    },
+    [resizing]
+  );
+
+  //закончить ресайз
+  const onResizeEnd = useCallback(() => {
+    setResizing(null);
+  }, []);
 
   //блок таблицы
   return (
