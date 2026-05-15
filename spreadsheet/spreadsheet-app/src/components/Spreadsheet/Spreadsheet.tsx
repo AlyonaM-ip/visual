@@ -68,6 +68,7 @@ export default function Spreadsheet() {
   //блок таблицы
   return (
     <div>
+      {/*панель формул*/}
       <div>
         <input
           value={editing ? editValue : formulaValue(selected.row, selected.col)}
@@ -90,9 +91,44 @@ export default function Spreadsheet() {
         />
       </div>
 
+      {/*здесь адрес ячейки*/}
       <div>
         {colLabel(selected.col)}{selected.row + 1}
       </div>
+
+      {/*таблица*/}
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            {Array.from({ length: data.colCount }, (_, i) => (
+              <th key={i}>{colLabel(i)}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {Array.from({ length: data.rowCount }, (_, row) => (
+            <tr key={row}>
+              <td>{row + 1}</td>
+              {Array.from({ length: data.colCount }, (_, col) => (
+                <td
+                  key={col}
+                  onClick={() => {
+                    setSelected({ row, col });
+                    setEditing(false);
+                  }}
+                  onDoubleClick={() => {
+                    setSelected({ row, col });
+                    startEdit();
+                  }}
+                >
+                  {displayValue(row, col)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
