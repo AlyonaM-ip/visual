@@ -38,29 +38,42 @@ export function getCell(data: SpreadsheetData, row: number, col: number): Cell |
   return data.cells.get(cellKey(row, col)) ?? null;
 }
 
-//установить значение ячейки
+//установить значение ячейки и вычислить если можно
 export function setCell(
   data: SpreadsheetData,
   row: number,
   col: number,
-  value: CellValue,
-  formula: string = ''
+  input: string
 ): SpreadsheetData {
   const newCells = new Map(data.cells);
+  const key = cellKey(row, col);
 
-  if (value === null && formula === '') {
-    newCells.delete(cellKey(row, col));
-  } else {
-    newCells.set(cellKey(row, col), { value, formula });
+  //удалить ячейку
+  if (input === '') {
+    newCells.delete(key);
+    return { ...data, cells: newCells };
   }
 
-  return {
-    ...data,
-    cells: newCells,
-  };
+  //для формулы/значения
+  if (input.startsWith('=')) {
+    const formula = input.slice(1); // убрать '='
+    const value = calcFormula(formula, data);
+    newCells.set(key, { value, formula: input });
+  } else {
+    //автоопределение типа
+    const num = Number(input);
+    if (!isNaN(num) && input.trim() !== '') {
+      newCells.set(key, { value: num, formula: '' });
+    } else if (input === 'true' || input === 'false') {
+      newCells.set(key, { value: input === 'true', formula: '' });
+    } else {
+      newCells.set(key, { value: input, formula: '' });
+    }
+  }
+
+  return { ...data, cells: newCells };
 }
 
-// !!!_NEW COMMIT_!!!
 //преобразовать буквенные индексы в числовые
 function colToIndex(col: string): number {
   let result = 0;
@@ -181,3 +194,4 @@ export function calcFormula(formula: string, data: SpreadsheetData): CellValue {
   //вернуть строку
   return formula;
 }
+
