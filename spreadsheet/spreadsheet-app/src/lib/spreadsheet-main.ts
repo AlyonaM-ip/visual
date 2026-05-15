@@ -195,3 +195,82 @@ export function calcFormula(formula: string, data: SpreadsheetData): CellValue {
   return formula;
 }
 
+//добавить строку
+export function addRow(data: SpreadsheetData, afterIndex: number): SpreadsheetData {
+  const newCells = new Map<string, Cell>();
+
+  for (const [key, cell] of data.cells) {
+    const [r, c] = key.split(',').map(Number);
+    if (r > afterIndex) {
+      newCells.set(cellKey(r + 1, c), cell);
+    } else {
+      newCells.set(key, cell);
+    }
+  }
+
+  return {
+    cells: newCells,
+    rowCount: data.rowCount + 1,
+    colCount: data.colCount,
+  };
+}
+
+//удалить строку
+export function deleteRow(data: SpreadsheetData, index: number): SpreadsheetData {
+  const newCells = new Map<string, Cell>();
+
+  for (const [key, cell] of data.cells) {
+    const [r, c] = key.split(',').map(Number);
+    if (r < index) {
+      newCells.set(key, cell);
+    } else if (r > index) {
+      newCells.set(cellKey(r - 1, c), cell);
+    }
+  }
+
+  return {
+    cells: newCells,
+    rowCount: data.rowCount - 1,
+    colCount: data.colCount,
+  };
+}
+
+//добавить столбец
+export function addColumn(data: SpreadsheetData, afterIndex: number): SpreadsheetData {
+  const newCells = new Map<string, Cell>();
+
+  for (const [key, cell] of data.cells) {
+    const [r, c] = key.split(',').map(Number);
+    if (c > afterIndex) {
+      newCells.set(cellKey(r, c + 1), cell);
+    } else {
+      newCells.set(key, cell);
+    }
+  }
+
+  return {
+    cells: newCells,
+    rowCount: data.rowCount,
+    colCount: data.colCount + 1,
+  };
+}
+
+//удалить столбец
+export function deleteColumn(data: SpreadsheetData, index: number): SpreadsheetData {
+  const newCells = new Map<string, Cell>();
+
+  for (const [key, cell] of data.cells) {
+    const [r, c] = key.split(',').map(Number);
+    if (c < index) {
+      newCells.set(key, cell);
+    } else if (c > index) {
+      newCells.set(cellKey(r, c - 1), cell);
+    }
+  }
+
+  return {
+    cells: newCells,
+    rowCount: data.rowCount,
+    colCount: data.colCount - 1,
+  };
+}
