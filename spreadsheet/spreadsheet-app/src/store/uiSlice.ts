@@ -11,3 +11,6 @@ const uiSlice = createSlice({
     },
   },
 });
+
+export const { setSaveStatus } = uiSlice.actions;
+export default uiSlice.reducer;
