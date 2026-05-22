@@ -270,6 +270,8 @@ const exportCSV = () => {
         />
       </div>
 
+      <button onClick={exportCSV}>Экспорт CSV</button>
+
       {/*адрес ячейки*/}
       <div>
         {colLabel(selected.col)}{selected.row + 1}
