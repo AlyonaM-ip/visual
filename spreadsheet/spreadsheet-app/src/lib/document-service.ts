@@ -84,3 +84,8 @@ export function duplicateDocument(id: string): Document | null {
   saveAll(docs);
   return copy;
 }
+
+//ключ для ячеек
+function cellsKey(id: string): string {
+  return 'spreadsheet-cells-' + id;
+}
