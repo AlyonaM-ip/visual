@@ -44,3 +44,6 @@ const documentsSlice = createSlice({
     },
   },
 });
+
+export const { setList, setActive, addDoc, removeDoc, renameDoc } = documentsSlice.actions;
+export default documentsSlice.reducer;
