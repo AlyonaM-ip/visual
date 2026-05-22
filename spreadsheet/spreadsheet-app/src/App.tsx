@@ -1,21 +1,20 @@
-import { useSelector, useDispatch } from 'react-redux';
-import type { RootState } from './store';
-import { setActive } from './store/documentsSlice';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import AppLayout from './components/AppLayout/AppLayout';
 import Dashboard from './components/Dashboard/Dashboard';
 import Spreadsheet from './components/Spreadsheet/Spreadsheet';
+import NotFound from './components/NotFound/NotFound';
 
 export default function App() {
-  const activeId = useSelector((state: RootState) => state.documents.activeId);
-  const dispatch = useDispatch();
-
-  if (activeId) {
-    return (
-      <div>
-        <button onClick={() => dispatch(setActive(null))}>Назад к списку</button>
-        <Spreadsheet docId={activeId} />
-      </div>
-    );
-  }
-
-  return <Dashboard />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<Navigate to="/dashboard" />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/documents/:id" element={<Spreadsheet />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
+  );
 }
