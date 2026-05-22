@@ -9,7 +9,7 @@ export default function App() {
     return (
       <div>
         <button onClick={() => setActiveDoc(null)}>Назад к списку</button>
-        <Spreadsheet />
+        <Spreadsheet docId={activeDoc} />
       </div>
     );
   }
