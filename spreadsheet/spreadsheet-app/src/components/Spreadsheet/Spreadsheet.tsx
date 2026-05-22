@@ -1,5 +1,5 @@
 //импорт основных типов и функций из main
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import {
   type SpreadsheetData,
   type CellPosition,
@@ -10,7 +10,10 @@ import {
   deleteRow,
   addColumn,
   deleteColumn,
+  cellsToObject,
+  objectToCells,
 } from '../../lib/spreadsheet-main';
+import { saveCells, loadCells } from '../../lib/document-service';
 
 //преобразовать число в букву колонки
 function colLabel(index: number): string {
@@ -23,12 +26,22 @@ function colLabel(index: number): string {
   return result;
 }
 
+interface SpreadsheetProps {
+  docId: string;
+}
+
 //таблица
-export default function Spreadsheet() {
+export default function Spreadsheet({ docId }: SpreadsheetProps) {
   //размер по умолчанию
-  const [data, setData] = useState<SpreadsheetData>(() =>
-    createSpreadsheet(100, 26)
-  );
+  const [data, setData] = useState<SpreadsheetData>(() => {
+    const saved = loadCells(docId);
+    const cells = objectToCells(saved);
+    return {
+      cells,
+      rowCount: 100,
+      colCount: 26,
+    };
+  });
 
   //режимы ячеек/редактор
   const [selected, setSelected] = useState<CellPosition>({ row: 0, col: 0 });
@@ -203,6 +216,12 @@ export default function Spreadsheet() {
     setResizing(null);
   }, []);
 
+  //автосохранение при изменении data
+  useEffect(() => {
+    const obj = cellsToObject(data);
+    saveCells(docId, obj);
+  }, [data, docId]);
+
   //блок таблицы
   return (
     <div onMouseMove={onResizeMove} onMouseUp={onResizeEnd} onMouseLeave={onResizeEnd}>
@@ -248,7 +267,14 @@ export default function Spreadsheet() {
                 {colLabel(i)}
                 <div
                   onMouseDown={(e) => onColResizeStart(e, i)}
-                  style={{ position: 'absolute', right: 0, top: 0, bottom: 0, width: 4, cursor: 'col-resize', }}
+                  style={{
+                    position: 'absolute',
+                    right: 0,
+                    top: 0,
+                    bottom: 0,
+                    width: 4,
+                    cursor: 'col-resize',
+                  }}
                 />
               </th>
             ))}
@@ -264,7 +290,14 @@ export default function Spreadsheet() {
                 {row + 1}
                 <div
                   onMouseDown={(e) => onRowResizeStart(e, row)}
-                  style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: 4, cursor: 'row-resize', }}
+                  style={{
+                    position: 'absolute',
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    height: 4,
+                    cursor: 'row-resize',
+                  }}
                 />
               </td>
               {Array.from({ length: data.colCount }, (_, col) => (
