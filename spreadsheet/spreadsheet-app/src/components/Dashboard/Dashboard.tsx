@@ -58,7 +58,7 @@ export default function Dashboard({ onOpen }: DashboardProps) {
     }
   };
 
-    return (
+return (
     <div>
       <h2>Мои документы</h2>
 

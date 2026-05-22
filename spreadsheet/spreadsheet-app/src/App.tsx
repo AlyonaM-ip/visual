@@ -1,12 +1,18 @@
+import { useState } from 'react';
+import Dashboard from './components/Dashboard/Dashboard';
 import Spreadsheet from './components/Spreadsheet/Spreadsheet';
 
-function App() {
-  return (
-    <div className="app">
-      <h1>Spreadsheet</h1>
-      <Spreadsheet />
-    </div>
-  );
-}
+export default function App() {
+  const [activeDoc, setActiveDoc] = useState<string | null>(null);
 
-export default App;
+  if (activeDoc) {
+    return (
+      <div>
+        <button onClick={() => setActiveDoc(null)}>Назад к списку</button>
+        <Spreadsheet />
+      </div>
+    );
+  }
+
+  return <Dashboard onOpen={(id) => setActiveDoc(id)} />;
+}
