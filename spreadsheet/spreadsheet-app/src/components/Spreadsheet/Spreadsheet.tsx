@@ -3,7 +3,6 @@ import { useState, useCallback, useEffect } from 'react';
 import {
   type SpreadsheetData,
   type CellPosition,
-  createSpreadsheet,
   getCell,
   setCell,
   addRow,
