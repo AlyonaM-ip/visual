@@ -52,3 +52,6 @@ const spreadsheetSlice = createSlice({
     },
   },
 });
+
+export const { updateCell, addRow, deleteRow, addColumn, deleteColumn, loadCells } = spreadsheetSlice.actions;
+export default spreadsheetSlice.reducer;
