@@ -221,8 +221,31 @@ export default function Spreadsheet({ docId }: SpreadsheetProps) {
     saveCells(docId, obj);
   }, [data, docId]);
 
-  //блок таблицы
-  return (
+
+//экспорт в CSV
+const exportCSV = () => {
+  let csv = '';
+  for (let r = 0; r < data.rowCount; r++) {
+    const row: string[] = [];
+    for (let c = 0; c < data.colCount; c++) {
+      const cell = getCell(data, r, c);
+      const val = cell?.value ?? '';
+      row.push(String(val));
+    }
+    csv += row.join(',') + '\n';
+  }
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'document.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+};
+
+
+//блок таблицы
+ return (
     <div onMouseMove={onResizeMove} onMouseUp={onResizeEnd} onMouseLeave={onResizeEnd}>
       {/*панель формул*/}
       <div>
