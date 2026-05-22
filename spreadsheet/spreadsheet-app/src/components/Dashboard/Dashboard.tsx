@@ -1,6 +1,5 @@
-import { useDispatch } from 'react-redux';
 import { useState, useEffect } from 'react';
-import { setActive } from '../../store/documentsSlice';
+import { useNavigate } from 'react-router-dom';
 import {
   type Document,
   loadDocuments,
@@ -11,7 +10,7 @@ import {
 } from '../../lib/document-service';
 
 export default function Dashboard() {
-  const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [docs, setDocs] = useState<Document[]>([]);
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState('');
@@ -61,7 +60,7 @@ export default function Dashboard() {
   };
 
   const handleOpen = (id: string) => {
-    dispatch(setActive(id));
+    navigate('/documents/' + id);
   };
 
   return (
