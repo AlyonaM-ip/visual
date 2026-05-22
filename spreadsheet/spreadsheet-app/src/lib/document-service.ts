@@ -1,3 +1,5 @@
+import type { CellValue } from './spreadsheet-main';
+
 //тип документа
 export interface Document {
   id: string;
@@ -91,12 +93,12 @@ function cellsKey(id: string): string {
 }
 
 //сохранить ячейки документа
-export function saveCells(id: string, cells: Record<string, { value: unknown; formula: string }>): void {
+export function saveCells(id: string, cells: Record<string, { value: CellValue; formula: string }>): void {
   localStorage.setItem(cellsKey(id), JSON.stringify(cells));
 }
 
 //загрузить ячейки документа
-export function loadCells(id: string): Record<string, { value: unknown; formula: string }> {
+export function loadCells(id: string): Record<string, { value: CellValue; formula: string }> {
   const raw = localStorage.getItem(cellsKey(id));
   if (!raw) return {};
   return JSON.parse(raw);
