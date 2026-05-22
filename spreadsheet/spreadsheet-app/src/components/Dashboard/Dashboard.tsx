@@ -1,4 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import type { RootState } from '../../store';
+import { setActive } from '../../store/documentsSlice';
 import {
   type Document,
   loadDocuments,
@@ -8,29 +11,23 @@ import {
   duplicateDocument,
 } from '../../lib/document-service';
 
-interface DashboardProps {
-  onOpen: (id: string) => void;
-}
-
-export default function Dashboard({ onOpen }: DashboardProps) {
+export default function Dashboard() {
+  const dispatch = useDispatch();
   const [docs, setDocs] = useState<Document[]>([]);
   const [showCreate, setShowCreate] = useState(false);
   const [newName, setNewName] = useState('');
   const [newRows, setNewRows] = useState(100);
   const [newCols, setNewCols] = useState(26);
 
-  //для переименования
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renamingName, setRenamingName] = useState('');
 
-  //обновить список
   const refresh = () => setDocs(loadDocuments());
 
   useEffect(() => {
     refresh();
   }, []);
 
-  //создать документ
   const handleCreate = () => {
     if (newName.trim() === '') return;
     createDocument(newName.trim(), newRows, newCols);
@@ -39,7 +36,6 @@ export default function Dashboard({ onOpen }: DashboardProps) {
     refresh();
   };
 
-  //удалить документ
   const handleDelete = (id: string) => {
     if (confirm('Удалить документ?')) {
       deleteDocument(id);
@@ -47,25 +43,26 @@ export default function Dashboard({ onOpen }: DashboardProps) {
     }
   };
 
-  //дублировать документ
   const handleDuplicate = (id: string) => {
     duplicateDocument(id);
     refresh();
   };
 
-  //начать переименование
   const handleRenameStart = (doc: Document) => {
     setRenamingId(doc.id);
     setRenamingName(doc.name);
   };
 
-  //сохранить переименование
   const handleRenameSave = (id: string) => {
     if (renamingName.trim() !== '') {
       renameDocument(id, renamingName.trim());
     }
     setRenamingId(null);
     refresh();
+  };
+
+  const handleOpen = (id: string) => {
+    dispatch(setActive(id));
   };
 
   return (
@@ -115,7 +112,7 @@ export default function Dashboard({ onOpen }: DashboardProps) {
               autoFocus
             />
           ) : (
-            <button onClick={() => onOpen(doc.id)}>{doc.name}</button>
+            <button onClick={() => handleOpen(doc.id)}>{doc.name}</button>
           )}
           <span>{doc.updatedAt.slice(0, 10)}</span>
           <button onClick={() => handleRenameStart(doc)}>Переименовать</button>
