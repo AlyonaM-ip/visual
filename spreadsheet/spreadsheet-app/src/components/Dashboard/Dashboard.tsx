@@ -57,3 +57,49 @@ export default function Dashboard({ onOpen }: DashboardProps) {
       refresh();
     }
   };
+
+    return (
+    <div>
+      <h2>Мои документы</h2>
+
+      <button onClick={() => setShowCreate(!showCreate)}>
+        {showCreate ? 'Отмена' : 'Создать документ'}
+      </button>
+
+      {showCreate && (
+        <div>
+          <input
+            placeholder="Название"
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
+          <input
+            type="number"
+            placeholder="Строки"
+            value={newRows}
+            onChange={(e) => setNewRows(Number(e.target.value))}
+          />
+          <input
+            type="number"
+            placeholder="Столбцы"
+            value={newCols}
+            onChange={(e) => setNewCols(Number(e.target.value))}
+          />
+          <button onClick={handleCreate}>Создать</button>
+        </div>
+      )}
+
+      {docs.length === 0 && <p>Нет документов</p>}
+
+      {docs.map((doc) => (
+        <div key={doc.id}>
+          <span onClick={() => onOpen(doc.id)}>{doc.name}</span>
+          <span>{doc.updatedAt.slice(0, 10)}</span>
+          <button onClick={() => handleRename(doc.id)}>Переименовать</button>
+          <button onClick={() => handleDuplicate(doc.id)}>Дублировать</button>
+          <button onClick={() => handleDelete(doc.id)}>Удалить</button>
+        </div>
+      ))}
+    </div>
+  );
+}
