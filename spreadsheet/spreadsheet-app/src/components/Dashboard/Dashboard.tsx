@@ -115,7 +115,7 @@ export default function Dashboard({ onOpen }: DashboardProps) {
               autoFocus
             />
           ) : (
-            <span onClick={() => onOpen(doc.id)}>{doc.name}</span>
+            <button onClick={() => onOpen(doc.id)}>{doc.name}</button>
           )}
           <span>{doc.updatedAt.slice(0, 10)}</span>
           <button onClick={() => handleRenameStart(doc)}>Переименовать</button>
