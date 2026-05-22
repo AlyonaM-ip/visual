@@ -9,6 +9,10 @@ interface SpreadsheetState {
   cells: Record<string, CellData>;
   rowCount: number;
   colCount: number;
-  selectedRow: number;
-  selectedCol: number;
 }
+
+const initialState: SpreadsheetState = {
+  cells: {},
+  rowCount: 100,
+  colCount: 26,
+};
