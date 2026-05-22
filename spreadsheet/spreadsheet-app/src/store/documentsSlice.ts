@@ -13,3 +13,8 @@ interface DocumentsState {
   list: Document[];
   activeId: string | null;
 }
+
+const initialState: DocumentsState = {
+  list: [],
+  activeId: null,
+};
