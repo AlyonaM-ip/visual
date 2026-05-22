@@ -274,3 +274,21 @@ export function deleteColumn(data: SpreadsheetData, index: number): SpreadsheetD
     colCount: data.colCount - 1,
   };
 }
+
+//преобразовать cells Map в объект для сохранения
+export function cellsToObject(data: SpreadsheetData): Record<string, { value: CellValue; formula: string }> {
+  const obj: Record<string, { value: CellValue; formula: string }> = {};
+  for (const [key, cell] of data.cells) {
+    obj[key] = { value: cell.value, formula: cell.formula };
+  }
+  return obj;
+}
+
+//загрузить cells из объекта в Map
+export function objectToCells(obj: Record<string, { value: CellValue; formula: string }>): Map<string, Cell> {
+  const map = new Map<string, Cell>();
+  for (const key in obj) {
+    map.set(key, obj[key]);
+  }
+  return map;
+}
