@@ -1,5 +1,6 @@
 //импорт основных типов и функций из main
 import { useState, useCallback, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import {
   type SpreadsheetData,
   type CellPosition,
@@ -25,12 +26,11 @@ function colLabel(index: number): string {
   return result;
 }
 
-interface SpreadsheetProps {
-  docId: string;
-}
-
 //таблица
-export default function Spreadsheet({ docId }: SpreadsheetProps) {
+export default function Spreadsheet() {
+  const { id } = useParams<{ id: string }>();
+  const docId = id || '';
+
   //размер по умолчанию
   const [data, setData] = useState<SpreadsheetData>(() => {
     const saved = loadCells(docId);
@@ -285,8 +285,9 @@ export default function Spreadsheet({ docId }: SpreadsheetProps) {
         {colLabel(selected.col)}{selected.row + 1}
       </div>
 
-      {/*кнопки экспорта*/}
+      {/*кнопки*/}
       <div>
+        <button onClick={() => window.history.back()}>Назад</button>
         <button onClick={exportCSV}>Экспорт CSV</button>
         <button onClick={exportJSON}>Экспорт JSON</button>
       </div>
