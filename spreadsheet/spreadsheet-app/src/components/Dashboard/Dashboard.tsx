@@ -19,6 +19,10 @@ export default function Dashboard({ onOpen }: DashboardProps) {
   const [newRows, setNewRows] = useState(100);
   const [newCols, setNewCols] = useState(26);
 
+  //для переименования
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renamingName, setRenamingName] = useState('');
+
   //обновить список
   const refresh = () => setDocs(loadDocuments());
 
@@ -49,16 +53,22 @@ export default function Dashboard({ onOpen }: DashboardProps) {
     refresh();
   };
 
-  //переименовать документ
-  const handleRename = (id: string) => {
-    const name = prompt('Новое название:');
-    if (name && name.trim() !== '') {
-      renameDocument(id, name.trim());
-      refresh();
-    }
+  //начать переименование
+  const handleRenameStart = (doc: Document) => {
+    setRenamingId(doc.id);
+    setRenamingName(doc.name);
   };
 
-return (
+  //сохранить переименование
+  const handleRenameSave = (id: string) => {
+    if (renamingName.trim() !== '') {
+      renameDocument(id, renamingName.trim());
+    }
+    setRenamingId(null);
+    refresh();
+  };
+
+  return (
     <div>
       <h2>Мои документы</h2>
 
@@ -93,9 +103,22 @@ return (
 
       {docs.map((doc) => (
         <div key={doc.id}>
-          <span onClick={() => onOpen(doc.id)}>{doc.name}</span>
+          {renamingId === doc.id ? (
+            <input
+              value={renamingName}
+              onChange={(e) => setRenamingName(e.target.value)}
+              onBlur={() => handleRenameSave(doc.id)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') handleRenameSave(doc.id);
+                if (e.key === 'Escape') setRenamingId(null);
+              }}
+              autoFocus
+            />
+          ) : (
+            <span onClick={() => onOpen(doc.id)}>{doc.name}</span>
+          )}
           <span>{doc.updatedAt.slice(0, 10)}</span>
-          <button onClick={() => handleRename(doc.id)}>Переименовать</button>
+          <button onClick={() => handleRenameStart(doc)}>Переименовать</button>
           <button onClick={() => handleDuplicate(doc.id)}>Дублировать</button>
           <button onClick={() => handleDelete(doc.id)}>Удалить</button>
         </div>
