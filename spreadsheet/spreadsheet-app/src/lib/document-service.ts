@@ -89,3 +89,15 @@ export function duplicateDocument(id: string): Document | null {
 function cellsKey(id: string): string {
   return 'spreadsheet-cells-' + id;
 }
+
+//сохранить ячейки документа
+export function saveCells(id: string, cells: Record<string, { value: unknown; formula: string }>): void {
+  localStorage.setItem(cellsKey(id), JSON.stringify(cells));
+}
+
+//загрузить ячейки документа
+export function loadCells(id: string): Record<string, { value: unknown; formula: string }> {
+  const raw = localStorage.getItem(cellsKey(id));
+  if (!raw) return {};
+  return JSON.parse(raw);
+}
