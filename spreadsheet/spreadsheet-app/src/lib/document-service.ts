@@ -11,7 +11,7 @@ export interface Document {
 }
 
 //тип сохраняемой ячейки
-type CellSaveData = { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right' };
+type CellSaveData = { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right'; textColor: string; bgColor: string };
 
 //ключ для localStorage
 const DOCS_KEY = 'spreadsheet-docs';

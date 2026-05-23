@@ -9,6 +9,8 @@ export interface Cell {
   italic: boolean;
   underline: boolean;
   align: 'left' | 'center' | 'right';
+  textColor: string;
+  bgColor: string;
 }
 
 //интерфейс координат ячейки
@@ -65,21 +67,23 @@ export function setCell(
   const italic = old?.italic ?? false;
   const underline = old?.underline ?? false;
   const align = old?.align ?? 'left';
+  const textColor = old?.textColor ?? '#000000';
+  const bgColor = old?.bgColor ?? '#ffffff';
 
   //для формулы/значения
   if (input.startsWith('=')) {
     const formula = input.slice(1);
     const value = calcFormula(formula, data);
-    newCells.set(key, { value, formula: input, bold, italic, underline, align });
+    newCells.set(key, { value, formula: input, bold, italic, underline, align, textColor, bgColor });
   } else {
     //автоопределение типа
     const num = Number(input);
     if (!isNaN(num) && input.trim() !== '') {
-      newCells.set(key, { value: num, formula: '', bold, italic, underline, align });
+      newCells.set(key, { value: num, formula: '', bold, italic, underline, align, textColor, bgColor });
     } else if (input === 'true' || input === 'false') {
-      newCells.set(key, { value: input === 'true', formula: '', bold, italic, underline, align });
+      newCells.set(key, { value: input === 'true', formula: '', bold, italic, underline, align, textColor, bgColor });
     } else {
-      newCells.set(key, { value: input, formula: '', bold, italic, underline, align });
+      newCells.set(key, { value: input, formula: '', bold, italic, underline, align, textColor, bgColor });
     }
   }
 
@@ -288,16 +292,16 @@ export function deleteColumn(data: SpreadsheetData, index: number): SpreadsheetD
 }
 
 //преобразовать cells Map в объект для сохранения
-export function cellsToObject(data: SpreadsheetData): Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right' }> {
-  const obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right' }> = {};
+export function cellsToObject(data: SpreadsheetData): Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right'; textColor: string; bgColor: string }> {
+  const obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right'; textColor: string; bgColor: string }> = {};
   for (const [key, cell] of data.cells) {
-    obj[key] = { value: cell.value, formula: cell.formula, bold: cell.bold, italic: cell.italic, underline: cell.underline, align: cell.align };
+    obj[key] = { value: cell.value, formula: cell.formula, bold: cell.bold, italic: cell.italic, underline: cell.underline, align: cell.align, textColor: cell.textColor, bgColor: cell.bgColor };
   }
   return obj;
 }
 
 //загрузить cells из объекта в Map
-export function objectToCells(obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right' }>): Map<string, Cell> {
+export function objectToCells(obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right'; textColor: string; bgColor: string }>): Map<string, Cell> {
   const map = new Map<string, Cell>();
   for (const key in obj) {
     const item = obj[key];
@@ -308,6 +312,8 @@ export function objectToCells(obj: Record<string, { value: CellValue; formula: s
       italic: item.italic ?? false,
       underline: item.underline ?? false,
       align: item.align ?? 'left',
+      textColor: item.textColor ?? '#000000',
+      bgColor: item.bgColor ?? '#ffffff',
     });
   }
   return map;

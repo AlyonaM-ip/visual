@@ -155,6 +155,30 @@ export default function Spreadsheet() {
     });
   };
 
+  const handleTextColor = (color: string) => {
+    setData((prev) => {
+      const newCells = new Map(prev.cells);
+      const key = cellKey(selected.row, selected.col);
+      const cell = newCells.get(key);
+      if (cell) {
+        newCells.set(key, { ...cell, textColor: color });
+      }
+      return { ...prev, cells: newCells };
+    });
+  };
+
+  const handleBgColor = (color: string) => {
+    setData((prev) => {
+      const newCells = new Map(prev.cells);
+      const key = cellKey(selected.row, selected.col);
+      const cell = newCells.get(key);
+      if (cell) {
+        newCells.set(key, { ...cell, bgColor: color });
+      }
+      return { ...prev, cells: newCells };
+    });
+  };
+
   //открыть контекстное меню на заголовке строки
   const onRowContext = useCallback((e: React.MouseEvent, row: number) => {
     e.preventDefault();
@@ -394,6 +418,8 @@ export default function Spreadsheet() {
         <button onClick={() => handleAlign('left')}>L</button>
         <button onClick={() => handleAlign('center')}>C</button>
         <button onClick={() => handleAlign('right')}>R</button>
+        <input type="color" defaultValue="#000000" onChange={(e) => handleTextColor(e.target.value)} title="Цвет текста" style={{ width: 30, height: 30, padding: 0, border: 'none', cursor: 'pointer' }} />
+        <input type="color" defaultValue="#ffffff" onChange={(e) => handleBgColor(e.target.value)} title="Цвет фона" style={{ width: 30, height: 30, padding: 0, border: 'none', cursor: 'pointer' }} />
       </div>
 
       {/*таблица*/}
@@ -461,6 +487,8 @@ export default function Spreadsheet() {
                       fontStyle: cell?.italic ? 'italic' : 'normal',
                       textDecoration: cell?.underline ? 'underline' : 'none',
                       textAlign: cell?.align ?? 'left',
+                      color: cell?.textColor ?? '#000000',
+                      backgroundColor: cell?.bgColor ?? '#ffffff',
                     }}
                   >
                     {displayValue(row, col)}
