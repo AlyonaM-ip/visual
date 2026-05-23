@@ -221,6 +221,20 @@ export default function Spreadsheet() {
     saveCells(docId, obj);
   }, [data, docId]);
 
+  //горячая клавиша Ctrl+S
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.ctrlKey && e.key === 's') {
+        e.preventDefault();
+        const obj = cellsToObject(data);
+        saveCells(docId, obj);
+        alert('Сохранено');
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [data, docId]);
+
   //экспорт в CSV
   const exportCSV = () => {
     let csv = '';
