@@ -221,19 +221,25 @@ export default function Spreadsheet() {
     saveCells(docId, obj);
   }, [data, docId]);
 
-  //горячая клавиша Ctrl+S
+  //горячие клавиши
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      // Ctrl+S — сохранить
       if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
         const obj = cellsToObject(data);
         saveCells(docId, obj);
         alert('Сохранено');
       }
+      // Del / Backspace — очистить ячейку
+      if ((e.key === 'Delete' || e.key === 'Backspace') && !editing) {
+        e.preventDefault();
+        setData((prev) => setCell(prev, selected.row, selected.col, ''));
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [data, docId]);
+  }, [data, docId, selected, editing]);
 
   //экспорт в CSV
   const exportCSV = () => {
