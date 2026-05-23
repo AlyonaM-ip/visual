@@ -53,6 +53,12 @@ const spreadsheetSlice = createSlice({
         state.cells[key].italic = !state.cells[key].italic;
       }
     },
+    toggleUnderline: (state, action: PayloadAction<{ row: number; col: number }>) => {
+      const key = action.payload.row + ',' + action.payload.col;
+      if (state.cells[key]) {
+        state.cells[key].underline = !state.cells[key].underline;
+      }
+    },
     addRow: (state) => {
       state.rowCount += 1;
     },
