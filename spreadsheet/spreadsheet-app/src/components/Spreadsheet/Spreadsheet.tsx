@@ -252,25 +252,10 @@ export default function Spreadsheet() {
           }
         }
       }
-      // Ctrl+B — жирный
-      if (e.ctrlKey && e.key === 'b') {
-        e.preventDefault();
-        dispatch(toggleBold({ row: selected.row, col: selected.col }));
-      }
-      // Ctrl+I — курсив
-      if (e.ctrlKey && e.key === 'i') {
-        e.preventDefault();
-        dispatch(toggleItalic({ row: selected.row, col: selected.col }));
-      }
-      // Ctrl+U — подчёркивание
-      if (e.ctrlKey && e.key === 'u') {
-        e.preventDefault();
-        dispatch(toggleUnderline({ row: selected.row, col: selected.col }));
-      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [data, docId, selected, editing, dispatch]);
+  }, [data, docId, selected, editing]);
 
   //экспорт в CSV
   const exportCSV = () => {
@@ -341,6 +326,9 @@ export default function Spreadsheet() {
         <button onClick={() => window.history.back()}>Назад</button>
         <button onClick={exportCSV}>Экспорт CSV</button>
         <button onClick={exportJSON}>Экспорт JSON</button>
+        <button onClick={() => dispatch(toggleBold({ row: selected.row, col: selected.col }))}>B</button>
+        <button onClick={() => dispatch(toggleItalic({ row: selected.row, col: selected.col }))}>I</button>
+        <button onClick={() => dispatch(toggleUnderline({ row: selected.row, col: selected.col }))}>U</button>
       </div>
 
       {/*таблица*/}
