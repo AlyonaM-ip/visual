@@ -1,4 +1,3 @@
-//импорт основных типов и функций из main
 import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -16,7 +15,6 @@ import {
 } from '../../lib/spreadsheet-main';
 import { saveCells, loadCells } from '../../lib/document-service';
 
-//преобразовать число в букву колонки
 function colLabel(index: number): string {
   let result = '';
   let n = index;
@@ -27,12 +25,10 @@ function colLabel(index: number): string {
   return result;
 }
 
-//таблица
 export default function Spreadsheet() {
   const { id } = useParams<{ id: string }>();
   const docId = id || '';
 
-  //размер по умолчанию
   const [data, setData] = useState<SpreadsheetData>(() => {
     const saved = loadCells(docId);
     const cells = objectToCells(saved);
@@ -43,11 +39,9 @@ export default function Spreadsheet() {
     };
   });
 
-  //режимы ячеек/редактор
   const [selected, setSelected] = useState<CellPosition>({ row: 0, col: 0 });
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState('');
-  //всплывающее меню
   const [contextMenu, setContextMenu] = useState<{
     x: number;
     y: number;
@@ -55,7 +49,6 @@ export default function Spreadsheet() {
     index: number;
   } | null>(null);
 
-  //размеры колонок и строк
   const [colWidths, setColWidths] = useState<number[]>(() =>
     Array(26).fill(80)
   );
@@ -63,7 +56,6 @@ export default function Spreadsheet() {
     Array(100).fill(24)
   );
 
-  //перетаскивание границы
   const [resizing, setResizing] = useState<{
     type: 'col' | 'row';
     index: number;
@@ -72,7 +64,6 @@ export default function Spreadsheet() {
     startSize: number;
   } | null>(null);
 
-  //получить значение ячейки
   const displayValue = useCallback(
     (row: number, col: number): string => {
       const cell = getCell(data, row, col);
@@ -82,8 +73,6 @@ export default function Spreadsheet() {
     },
     [data]
   );
-
-  //получить формулу ячейки
   const formulaValue = useCallback(
     (row: number, col: number): string => {
       const cell = getCell(data, row, col);
@@ -91,14 +80,11 @@ export default function Spreadsheet() {
     },
     [data, displayValue]
   );
-
-  //старт редактирования
   const startEdit = useCallback(() => {
     setEditValue(formulaValue(selected.row, selected.col));
     setEditing(true);
   }, [selected, formulaValue]);
 
-  //завершить редактирование
   const commitEdit = useCallback(() => {
     if (editing) {
       setData((prev) => setCell(prev, selected.row, selected.col, editValue));
@@ -106,7 +92,6 @@ export default function Spreadsheet() {
     }
   }, [editing, selected, editValue]);
 
-  //форматирование
   const handleBold = () => {
     setData((prev) => {
       const newCells = new Map(prev.cells);
@@ -179,24 +164,20 @@ export default function Spreadsheet() {
     });
   };
 
-  //открыть контекстное меню на заголовке строки
   const onRowContext = useCallback((e: React.MouseEvent, row: number) => {
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY, type: 'row', index: row });
   }, []);
 
-  //открыть контекстное меню на заголовке колонки
   const onColContext = useCallback((e: React.MouseEvent, col: number) => {
     e.preventDefault();
     setContextMenu({ x: e.clientX, y: e.clientY, type: 'col', index: col });
   }, []);
 
-  //закрыть меню
   const closeMenu = useCallback(() => {
     setContextMenu(null);
   }, []);
 
-  //добавить строку
   const handleAddRow = useCallback(() => {
     if (contextMenu) {
       setData((prev) => addRow(prev, contextMenu.index));
@@ -204,7 +185,6 @@ export default function Spreadsheet() {
     }
   }, [contextMenu, closeMenu]);
 
-  //удалить строку
   const handleDeleteRow = useCallback(() => {
     if (contextMenu && data.rowCount > 1) {
       setData((prev) => deleteRow(prev, contextMenu.index));
@@ -212,7 +192,6 @@ export default function Spreadsheet() {
     }
   }, [contextMenu, data.rowCount, closeMenu]);
 
-  //добавить колонку
   const handleAddColumn = useCallback(() => {
     if (contextMenu) {
       setData((prev) => addColumn(prev, contextMenu.index));
@@ -220,7 +199,6 @@ export default function Spreadsheet() {
     }
   }, [contextMenu, closeMenu]);
 
-  //удалить колонку
   const handleDeleteColumn = useCallback(() => {
     if (contextMenu && data.colCount > 1) {
       setData((prev) => deleteColumn(prev, contextMenu.index));
@@ -228,7 +206,6 @@ export default function Spreadsheet() {
     }
   }, [contextMenu, data.colCount, closeMenu]);
 
-  //начать ресайз колонки
   const onColResizeStart = useCallback(
     (e: React.MouseEvent, col: number) => {
       e.preventDefault();
@@ -243,7 +220,6 @@ export default function Spreadsheet() {
     [colWidths]
   );
 
-  //начать ресайз строки
   const onRowResizeStart = useCallback(
     (e: React.MouseEvent, row: number) => {
       e.preventDefault();
@@ -258,7 +234,6 @@ export default function Spreadsheet() {
     [rowHeights]
   );
 
-  //движение мыши при ресайзе
   const onResizeMove = useCallback(
     (e: React.MouseEvent) => {
       if (!resizing) return;
@@ -284,33 +259,27 @@ export default function Spreadsheet() {
     [resizing]
   );
 
-  //закончить ресайз
   const onResizeEnd = useCallback(() => {
     setResizing(null);
   }, []);
 
-  //автосохранение при изменении data
   useEffect(() => {
     const obj = cellsToObject(data);
     saveCells(docId, obj);
   }, [data, docId]);
 
-  //горячие клавиши
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      // Ctrl+S — сохранить
       if (e.ctrlKey && e.key === 's') {
         e.preventDefault();
         const obj = cellsToObject(data);
         saveCells(docId, obj);
         alert('Сохранено');
       }
-      // Del / Backspace — очистить ячейку
       if ((e.key === 'Delete' || e.key === 'Backspace') && !editing) {
         e.preventDefault();
         setData((prev) => setCell(prev, selected.row, selected.col, ''));
       }
-      // Tab — следующая ячейка
       if (e.key === 'Tab' && !editing) {
         e.preventDefault();
         const nextCol = selected.col + 1;
@@ -323,17 +292,14 @@ export default function Spreadsheet() {
           }
         }
       }
-      // Ctrl+B — жирный
       if (e.ctrlKey && e.key === 'b') {
         e.preventDefault();
         handleBold();
       }
-      // Ctrl+I — курсив
       if (e.ctrlKey && e.key === 'i') {
         e.preventDefault();
         handleItalic();
       }
-      // Ctrl+U — подчёркивание
       if (e.ctrlKey && e.key === 'u') {
         e.preventDefault();
         handleUnderline();
@@ -343,7 +309,6 @@ export default function Spreadsheet() {
     return () => window.removeEventListener('keydown', onKey);
   }, [data, docId, selected, editing]);
 
-  //экспорт в CSV
   const exportCSV = () => {
     let csv = '';
     for (let r = 0; r < data.rowCount; r++) {
@@ -364,7 +329,6 @@ export default function Spreadsheet() {
     URL.revokeObjectURL(url);
   };
 
-  //экспорт в JSON
   const exportJSON = () => {
     const obj = cellsToObject(data);
     const blob = new Blob([JSON.stringify(obj)], { type: 'application/json' });
@@ -376,10 +340,9 @@ export default function Spreadsheet() {
     URL.revokeObjectURL(url);
   };
 
-  //блок таблицы
   return (
     <div onMouseMove={onResizeMove} onMouseUp={onResizeEnd} onMouseLeave={onResizeEnd}>
-      {/*панель формул*/}
+      {}
       <div>
         <input
           value={editing ? editValue : formulaValue(selected.row, selected.col)}
@@ -500,7 +463,7 @@ export default function Spreadsheet() {
         </tbody>
       </table>
 
-      {/*контекстное меню*/}
+      {}
       {contextMenu && (
         <div style={{ position: 'fixed', top: contextMenu.y, left: contextMenu.x }}>
           {contextMenu.type === 'row' ? (

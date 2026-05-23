@@ -1,7 +1,5 @@
-//тип данных в ячейке
 export type CellValue = string | number | boolean | null;
 
-//интерфейс ячейки
 export interface Cell {
   value: CellValue;
   formula: string;
@@ -13,25 +11,21 @@ export interface Cell {
   bgColor: string;
 }
 
-//интерфейс координат ячейки
 export interface CellPosition {
   row: number;
   col: number;
 }
 
-//интерфейс таблицы
 export interface SpreadsheetData {
   cells: Map<string, Cell>;
   rowCount: number;
   colCount: number;
 }
 
-//функция ключа из координат ячейки
 export function cellKey(row: number, col: number): string {
   return `${row},${col}`;
 }
 
-//создание таблицы
 export function createSpreadsheet(rows: number, cols: number): SpreadsheetData {
   return {
     cells: new Map(),
@@ -40,12 +34,10 @@ export function createSpreadsheet(rows: number, cols: number): SpreadsheetData {
   };
 }
 
-//безопасно получить ячейку
 export function getCell(data: SpreadsheetData, row: number, col: number): Cell | null {
   return data.cells.get(cellKey(row, col)) ?? null;
 }
 
-//установить значение ячейки и вычислить если можно
 export function setCell(
   data: SpreadsheetData,
   row: number,
@@ -55,13 +47,11 @@ export function setCell(
   const newCells = new Map(data.cells);
   const key = cellKey(row, col);
 
-  //удалить ячейку
   if (input === '') {
     newCells.delete(key);
     return { ...data, cells: newCells };
   }
 
-  //старые стили сохраняем если ячейка была
   const old = data.cells.get(key);
   const bold = old?.bold ?? false;
   const italic = old?.italic ?? false;
@@ -70,13 +60,11 @@ export function setCell(
   const textColor = old?.textColor ?? '#000000';
   const bgColor = old?.bgColor ?? '#ffffff';
 
-  //для формулы/значения
   if (input.startsWith('=')) {
     const formula = input.slice(1);
     const value = calcFormula(formula, data);
     newCells.set(key, { value, formula: input, bold, italic, underline, align, textColor, bgColor });
   } else {
-    //автоопределение типа
     const num = Number(input);
     if (!isNaN(num) && input.trim() !== '') {
       newCells.set(key, { value: num, formula: '', bold, italic, underline, align, textColor, bgColor });
@@ -90,7 +78,6 @@ export function setCell(
   return { ...data, cells: newCells };
 }
 
-//преобразовать буквенные индексы в числовые
 function colToIndex(col: string): number {
   let result = 0;
   for (let i = 0; i < col.length; i++) {
@@ -99,7 +86,6 @@ function colToIndex(col: string): number {
   return result - 1;
 }
 
-//преобразовать число в буквенный индекс
 export function indexToCol(index: number): string {
   let result = '';
   let n = index;
@@ -110,7 +96,6 @@ export function indexToCol(index: number): string {
   return result;
 }
 
-//парсинг ячейки в виде {row: 0, col: 0}
 function parseCellRef(ref: string): CellPosition | null {
   const match = ref.match(/^([A-Z]+)(\d+)$/);
   if (!match) return null;
@@ -121,7 +106,6 @@ function parseCellRef(ref: string): CellPosition | null {
   };
 }
 
-//парсинг диапазона в виде {start, end}
 function parseRange(range: string): { start: CellPosition; end: CellPosition } | null {
   const parts = range.split(':');
   if (parts.length !== 2) return null;
@@ -133,7 +117,6 @@ function parseRange(range: string): { start: CellPosition; end: CellPosition } |
   return { start, end };
 }
 
-//получить числовое значение ячейки безопасно
 function getNumericValue(data: SpreadsheetData, row: number, col: number): number {
   const cell = getCell(data, row, col);
   if (!cell || cell.value === null || cell.value === true || cell.value === false) return 0;
@@ -141,18 +124,15 @@ function getNumericValue(data: SpreadsheetData, row: number, col: number): numbe
   return isNaN(num) ? 0 : num;
 }
 
-//вычислить формулу
 export function calcFormula(formula: string, data: SpreadsheetData): CellValue {
   formula = formula.trim();
 
   if (formula === '') return null;
 
-  //проверка на число
   if (!isNaN(Number(formula)) && formula !== '') {
     return Number(formula);
   }
 
-  //проверка на SUM/AVERAGE
   const sumMatch = formula.match(/^SUM\(([A-Z]+\d+):([A-Z]+\d+)\)$/i);
   if (sumMatch) {
     const range = parseRange(`${sumMatch[1]}:${sumMatch[2]}`);
@@ -183,7 +163,6 @@ export function calcFormula(formula: string, data: SpreadsheetData): CellValue {
     return count > 0 ? total / count : 0;
   }
 
-  //проверка на простые операнды арифметические
   const arithMatch = formula.match(/^(.+)([+\-*/])(.+)$/);
   if (arithMatch) {
     const left = calcFormula(arithMatch[1].trim(), data);
@@ -200,18 +179,15 @@ export function calcFormula(formula: string, data: SpreadsheetData): CellValue {
     }
   }
 
-  //проверка на ссылку на одну ячейку
   const cellRef = parseCellRef(formula);
   if (cellRef) {
     const cell = getCell(data, cellRef.row, cellRef.col);
     return cell ? cell.value : null;
   }
 
-  //вернуть строку
   return formula;
 }
 
-//добавить строку после указанной
 export function addRow(data: SpreadsheetData, afterIndex: number): SpreadsheetData {
   const newCells = new Map<string, Cell>();
 
@@ -231,7 +207,6 @@ export function addRow(data: SpreadsheetData, afterIndex: number): SpreadsheetDa
   };
 }
 
-//удалить строку
 export function deleteRow(data: SpreadsheetData, index: number): SpreadsheetData {
   const newCells = new Map<string, Cell>();
 
@@ -251,7 +226,6 @@ export function deleteRow(data: SpreadsheetData, index: number): SpreadsheetData
   };
 }
 
-//добавить колонку
 export function addColumn(data: SpreadsheetData, afterIndex: number): SpreadsheetData {
   const newCells = new Map<string, Cell>();
 
@@ -271,7 +245,6 @@ export function addColumn(data: SpreadsheetData, afterIndex: number): Spreadshee
   };
 }
 
-//удалить колонку
 export function deleteColumn(data: SpreadsheetData, index: number): SpreadsheetData {
   const newCells = new Map<string, Cell>();
 
@@ -291,7 +264,6 @@ export function deleteColumn(data: SpreadsheetData, index: number): SpreadsheetD
   };
 }
 
-//преобразовать cells Map в объект для сохранения
 export function cellsToObject(data: SpreadsheetData): Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right'; textColor: string; bgColor: string }> {
   const obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right'; textColor: string; bgColor: string }> = {};
   for (const [key, cell] of data.cells) {
@@ -300,7 +272,6 @@ export function cellsToObject(data: SpreadsheetData): Record<string, { value: Ce
   return obj;
 }
 
-//загрузить cells из объекта в Map
 export function objectToCells(obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right'; textColor: string; bgColor: string }>): Map<string, Cell> {
   const map = new Map<string, Cell>();
   for (const key in obj) {

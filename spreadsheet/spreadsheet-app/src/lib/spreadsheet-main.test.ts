@@ -13,7 +13,6 @@ import {
 } from './spreadsheet-main';
 
 describe('spreadsheet-main', () => {
-  // создание таблицы
   it('создаёт пустую таблицу', () => {
     const data = createSpreadsheet(10, 5);
     expect(data.rowCount).toBe(10);
@@ -21,7 +20,6 @@ describe('spreadsheet-main', () => {
     expect(data.cells.size).toBe(0);
   });
 
-  // установка и получение значения
   it('устанавливает и получает значение ячейки', () => {
     let data = createSpreadsheet(10, 5);
     data = setCell(data, 0, 0, 'привет');
@@ -48,7 +46,6 @@ describe('spreadsheet-main', () => {
     expect(getCell(data, 0, 0)).toBeNull();
   });
 
-  // формулы
   it('SUM вычисляет сумму', () => {
     let data = createSpreadsheet(10, 5);
     data = setCell(data, 0, 0, '5');
@@ -80,7 +77,6 @@ describe('spreadsheet-main', () => {
     expect(result).toBe(12);
   });
 
-  // строки и колонки
   it('добавляет строку', () => {
     let data = createSpreadsheet(10, 5);
     data = setCell(data, 5, 0, 'текст');
@@ -113,7 +109,6 @@ describe('spreadsheet-main', () => {
     expect(getCell(data, 0, 2)?.value).toBe('текст');
   });
 
-  // сохранение / загрузка
   it('сохраняет и загружает ячейки', () => {
     let data = createSpreadsheet(10, 5);
     data = setCell(data, 0, 0, 'тест');
