@@ -26,7 +26,7 @@ body.light h1, body.light h2 {
 body.light button {
   background: green;
   color: white;
-  border: none;
+  border: 2px solid rgb(100, 160, 39);
   padding: 6px 12px;
   cursor: pointer;
 }
