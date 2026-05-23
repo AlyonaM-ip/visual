@@ -10,6 +10,9 @@ export interface Document {
   colCount: number;
 }
 
+//тип сохраняемой ячейки
+type CellSaveData = { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean };
+
 //ключ для localStorage
 const DOCS_KEY = 'spreadsheet-docs';
 
@@ -93,12 +96,12 @@ function cellsKey(id: string): string {
 }
 
 //сохранить ячейки документа
-export function saveCells(id: string, cells: Record<string, { value: CellValue; formula: string }>): void {
+export function saveCells(id: string, cells: Record<string, CellSaveData>): void {
   localStorage.setItem(cellsKey(id), JSON.stringify(cells));
 }
 
 //загрузить ячейки документа
-export function loadCells(id: string): Record<string, { value: CellValue; formula: string }> {
+export function loadCells(id: string): Record<string, CellSaveData> {
   const raw = localStorage.getItem(cellsKey(id));
   if (!raw) return {};
   return JSON.parse(raw);
