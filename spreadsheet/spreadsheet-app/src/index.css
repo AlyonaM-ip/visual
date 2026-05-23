@@ -1,4 +1,38 @@
+/* базовые стили */
 td, th {
   border: 1px solid #ccc;
   padding: 4px 8px;
+}
+
+body {
+  margin: 0;
+}
+
+body.light th {
+  background: green;
+  color: white;
+  text-align: center;
+}
+
+body.light td {
+  background: #e8f5e9;
+}
+
+body.light h1, body.light h2 {
+  color: green;
+  text-align: center;
+}
+
+body.light button {
+  background: green;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.theme-btn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
 }
