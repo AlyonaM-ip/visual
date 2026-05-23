@@ -8,6 +8,7 @@ export interface Cell {
   bold: boolean;
   italic: boolean;
   underline: boolean;
+  align: 'left' | 'center' | 'right';
 }
 
 //интерфейс координат ячейки
@@ -63,21 +64,22 @@ export function setCell(
   const bold = old?.bold ?? false;
   const italic = old?.italic ?? false;
   const underline = old?.underline ?? false;
+  const align = old?.align ?? 'left';
 
   //для формулы/значения
   if (input.startsWith('=')) {
     const formula = input.slice(1);
     const value = calcFormula(formula, data);
-    newCells.set(key, { value, formula: input, bold, italic, underline });
+    newCells.set(key, { value, formula: input, bold, italic, underline, align });
   } else {
     //автоопределение типа
     const num = Number(input);
     if (!isNaN(num) && input.trim() !== '') {
-      newCells.set(key, { value: num, formula: '', bold, italic, underline });
+      newCells.set(key, { value: num, formula: '', bold, italic, underline, align });
     } else if (input === 'true' || input === 'false') {
-      newCells.set(key, { value: input === 'true', formula: '', bold, italic, underline });
+      newCells.set(key, { value: input === 'true', formula: '', bold, italic, underline, align });
     } else {
-      newCells.set(key, { value: input, formula: '', bold, italic, underline });
+      newCells.set(key, { value: input, formula: '', bold, italic, underline, align });
     }
   }
 
@@ -286,16 +288,16 @@ export function deleteColumn(data: SpreadsheetData, index: number): SpreadsheetD
 }
 
 //преобразовать cells Map в объект для сохранения
-export function cellsToObject(data: SpreadsheetData): Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean }> {
-  const obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean }> = {};
+export function cellsToObject(data: SpreadsheetData): Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right' }> {
+  const obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right' }> = {};
   for (const [key, cell] of data.cells) {
-    obj[key] = { value: cell.value, formula: cell.formula, bold: cell.bold, italic: cell.italic, underline: cell.underline };
+    obj[key] = { value: cell.value, formula: cell.formula, bold: cell.bold, italic: cell.italic, underline: cell.underline, align: cell.align };
   }
   return obj;
 }
 
 //загрузить cells из объекта в Map
-export function objectToCells(obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean }>): Map<string, Cell> {
+export function objectToCells(obj: Record<string, { value: CellValue; formula: string; bold: boolean; italic: boolean; underline: boolean; align: 'left' | 'center' | 'right' }>): Map<string, Cell> {
   const map = new Map<string, Cell>();
   for (const key in obj) {
     const item = obj[key];
@@ -305,6 +307,7 @@ export function objectToCells(obj: Record<string, { value: CellValue; formula: s
       bold: item.bold ?? false,
       italic: item.italic ?? false,
       underline: item.underline ?? false,
+      align: item.align ?? 'left',
     });
   }
   return map;

@@ -143,6 +143,18 @@ export default function Spreadsheet() {
     });
   };
 
+  const handleAlign = (align: 'left' | 'center' | 'right') => {
+    setData((prev) => {
+      const newCells = new Map(prev.cells);
+      const key = cellKey(selected.row, selected.col);
+      const cell = newCells.get(key);
+      if (cell) {
+        newCells.set(key, { ...cell, align });
+      }
+      return { ...prev, cells: newCells };
+    });
+  };
+
   //открыть контекстное меню на заголовке строки
   const onRowContext = useCallback((e: React.MouseEvent, row: number) => {
     e.preventDefault();
@@ -379,6 +391,9 @@ export default function Spreadsheet() {
         <button onClick={handleBold}>B</button>
         <button onClick={handleItalic}>I</button>
         <button onClick={handleUnderline}>U</button>
+        <button onClick={() => handleAlign('left')}>L</button>
+        <button onClick={() => handleAlign('center')}>C</button>
+        <button onClick={() => handleAlign('right')}>R</button>
       </div>
 
       {/*таблица*/}
@@ -445,6 +460,7 @@ export default function Spreadsheet() {
                       fontWeight: cell?.bold ? 'bold' : 'normal',
                       fontStyle: cell?.italic ? 'italic' : 'normal',
                       textDecoration: cell?.underline ? 'underline' : 'none',
+                      textAlign: cell?.align ?? 'left',
                     }}
                   >
                     {displayValue(row, col)}
