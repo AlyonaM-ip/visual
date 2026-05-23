@@ -1,10 +1,10 @@
 //импорт основных типов и функций из main
 import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 import {
   type SpreadsheetData,
   type CellPosition,
+  cellKey,
   getCell,
   setCell,
   addRow,
@@ -15,7 +15,6 @@ import {
   objectToCells,
 } from '../../lib/spreadsheet-main';
 import { saveCells, loadCells } from '../../lib/document-service';
-import { toggleBold, toggleItalic, toggleUnderline } from '../../store/spreadsheetSlice';
 
 //преобразовать число в букву колонки
 function colLabel(index: number): string {
@@ -32,7 +31,6 @@ function colLabel(index: number): string {
 export default function Spreadsheet() {
   const { id } = useParams<{ id: string }>();
   const docId = id || '';
-  const dispatch = useDispatch();
 
   //размер по умолчанию
   const [data, setData] = useState<SpreadsheetData>(() => {
@@ -107,6 +105,43 @@ export default function Spreadsheet() {
       setEditing(false);
     }
   }, [editing, selected, editValue]);
+
+  //форматирование
+  const handleBold = () => {
+    setData((prev) => {
+      const newCells = new Map(prev.cells);
+      const key = cellKey(selected.row, selected.col);
+      const cell = newCells.get(key);
+      if (cell) {
+        newCells.set(key, { ...cell, bold: !cell.bold });
+      }
+      return { ...prev, cells: newCells };
+    });
+  };
+
+  const handleItalic = () => {
+    setData((prev) => {
+      const newCells = new Map(prev.cells);
+      const key = cellKey(selected.row, selected.col);
+      const cell = newCells.get(key);
+      if (cell) {
+        newCells.set(key, { ...cell, italic: !cell.italic });
+      }
+      return { ...prev, cells: newCells };
+    });
+  };
+
+  const handleUnderline = () => {
+    setData((prev) => {
+      const newCells = new Map(prev.cells);
+      const key = cellKey(selected.row, selected.col);
+      const cell = newCells.get(key);
+      if (cell) {
+        newCells.set(key, { ...cell, underline: !cell.underline });
+      }
+      return { ...prev, cells: newCells };
+    });
+  };
 
   //открыть контекстное меню на заголовке строки
   const onRowContext = useCallback((e: React.MouseEvent, row: number) => {
@@ -252,6 +287,21 @@ export default function Spreadsheet() {
           }
         }
       }
+      // Ctrl+B — жирный
+      if (e.ctrlKey && e.key === 'b') {
+        e.preventDefault();
+        handleBold();
+      }
+      // Ctrl+I — курсив
+      if (e.ctrlKey && e.key === 'i') {
+        e.preventDefault();
+        handleItalic();
+      }
+      // Ctrl+U — подчёркивание
+      if (e.ctrlKey && e.key === 'u') {
+        e.preventDefault();
+        handleUnderline();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
@@ -326,9 +376,9 @@ export default function Spreadsheet() {
         <button onClick={() => window.history.back()}>Назад</button>
         <button onClick={exportCSV}>Экспорт CSV</button>
         <button onClick={exportJSON}>Экспорт JSON</button>
-        <button onClick={() => dispatch(toggleBold({ row: selected.row, col: selected.col }))}>B</button>
-        <button onClick={() => dispatch(toggleItalic({ row: selected.row, col: selected.col }))}>I</button>
-        <button onClick={() => dispatch(toggleUnderline({ row: selected.row, col: selected.col }))}>U</button>
+        <button onClick={handleBold}>B</button>
+        <button onClick={handleItalic}>I</button>
+        <button onClick={handleUnderline}>U</button>
       </div>
 
       {/*таблица*/}
