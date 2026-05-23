@@ -3,6 +3,9 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 interface CellData {
   value: string | number | boolean | null;
   formula: string;
+  bold: boolean;
+  italic: boolean;
+  underline: boolean;
 }
 
 interface SpreadsheetState {
@@ -26,13 +29,22 @@ const spreadsheetSlice = createSlice({
       col: number;
       value: string | number | boolean | null;
       formula: string;
+      bold: boolean;
+      italic: boolean;
+      underline: boolean;
     }>) => {
-      const { row, col, value, formula } = action.payload;
+      const { row, col, value, formula, bold, italic, underline } = action.payload;
       const key = row + ',' + col;
       if (value === null && formula === '') {
         delete state.cells[key];
       } else {
-        state.cells[key] = { value, formula };
+        state.cells[key] = { value, formula, bold, italic, underline };
+      }
+    },
+    toggleBold: (state, action: PayloadAction<{ row: number; col: number }>) => {
+      const key = action.payload.row + ',' + action.payload.col;
+      if (state.cells[key]) {
+        state.cells[key].bold = !state.cells[key].bold;
       }
     },
     addRow: (state) => {
@@ -53,5 +65,5 @@ const spreadsheetSlice = createSlice({
   },
 });
 
-export const { updateCell, addRow, deleteRow, addColumn, deleteColumn, loadCells } = spreadsheetSlice.actions;
+export const { updateCell, toggleBold, toggleItalic, toggleUnderline, addRow, deleteRow, addColumn, deleteColumn, loadCells } = spreadsheetSlice.actions;
 export default spreadsheetSlice.reducer;
