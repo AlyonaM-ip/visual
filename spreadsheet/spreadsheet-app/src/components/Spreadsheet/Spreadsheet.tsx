@@ -236,6 +236,19 @@ export default function Spreadsheet() {
         e.preventDefault();
         setData((prev) => setCell(prev, selected.row, selected.col, ''));
       }
+      // Tab — следующая ячейка
+      if (e.key === 'Tab' && !editing) {
+        e.preventDefault();
+        const nextCol = selected.col + 1;
+        if (nextCol < data.colCount) {
+          setSelected({ row: selected.row, col: nextCol });
+        } else {
+          const nextRow = selected.row + 1;
+          if (nextRow < data.rowCount) {
+            setSelected({ row: nextRow, col: 0 });
+          }
+        }
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
