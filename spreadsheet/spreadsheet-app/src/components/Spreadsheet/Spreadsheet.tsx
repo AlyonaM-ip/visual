@@ -1,6 +1,7 @@
 //импорт основных типов и функций из main
 import { useState, useCallback, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
 import {
   type SpreadsheetData,
   type CellPosition,
@@ -14,6 +15,7 @@ import {
   objectToCells,
 } from '../../lib/spreadsheet-main';
 import { saveCells, loadCells } from '../../lib/document-service';
+import { toggleBold, toggleItalic, toggleUnderline } from '../../store/spreadsheetSlice';
 
 //преобразовать число в букву колонки
 function colLabel(index: number): string {
@@ -30,6 +32,7 @@ function colLabel(index: number): string {
 export default function Spreadsheet() {
   const { id } = useParams<{ id: string }>();
   const docId = id || '';
+  const dispatch = useDispatch();
 
   //размер по умолчанию
   const [data, setData] = useState<SpreadsheetData>(() => {
@@ -249,10 +252,25 @@ export default function Spreadsheet() {
           }
         }
       }
+      // Ctrl+B — жирный
+      if (e.ctrlKey && e.key === 'b') {
+        e.preventDefault();
+        dispatch(toggleBold({ row: selected.row, col: selected.col }));
+      }
+      // Ctrl+I — курсив
+      if (e.ctrlKey && e.key === 'i') {
+        e.preventDefault();
+        dispatch(toggleItalic({ row: selected.row, col: selected.col }));
+      }
+      // Ctrl+U — подчёркивание
+      if (e.ctrlKey && e.key === 'u') {
+        e.preventDefault();
+        dispatch(toggleUnderline({ row: selected.row, col: selected.col }));
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [data, docId, selected, editing]);
+  }, [data, docId, selected, editing, dispatch]);
 
   //экспорт в CSV
   const exportCSV = () => {
@@ -372,21 +390,29 @@ export default function Spreadsheet() {
                   }}
                 />
               </td>
-              {Array.from({ length: data.colCount }, (_, col) => (
-                <td
-                  key={col}
-                  onClick={() => {
-                    setSelected({ row, col });
-                    setEditing(false);
-                  }}
-                  onDoubleClick={() => {
-                    setSelected({ row, col });
-                    startEdit();
-                  }}
-                >
-                  {displayValue(row, col)}
-                </td>
-              ))}
+              {Array.from({ length: data.colCount }, (_, col) => {
+                const cell = getCell(data, row, col);
+                return (
+                  <td
+                    key={col}
+                    onClick={() => {
+                      setSelected({ row, col });
+                      setEditing(false);
+                    }}
+                    onDoubleClick={() => {
+                      setSelected({ row, col });
+                      startEdit();
+                    }}
+                    style={{
+                      fontWeight: cell?.bold ? 'bold' : 'normal',
+                      fontStyle: cell?.italic ? 'italic' : 'normal',
+                      textDecoration: cell?.underline ? 'underline' : 'none',
+                    }}
+                  >
+                    {displayValue(row, col)}
+                  </td>
+                );
+              })}
             </tr>
           ))}
         </tbody>
